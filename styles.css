@@ -104,6 +104,7 @@ body {
     background-color: var(--bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
 }
 
 /* Typography */
@@ -627,12 +628,14 @@ a:hover {
 /* Browse Section */
 .browse {
     padding: var(--space-20) 0;
+    overflow-x: hidden;
 }
 
 .browse-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--space-6);
+    overflow-x: hidden;
 }
 
 .browse-header {
@@ -825,6 +828,7 @@ a:hover {
     display: flex;
     align-items: flex-start;
     gap: var(--space-4);
+    overflow-x: hidden;
 }
 
 .business-image {
@@ -889,7 +893,7 @@ a:hover {
 .business-actions {
     display: flex;
     gap: var(--space-2);
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     margin-top: var(--space-3);
 }
 
@@ -1625,6 +1629,12 @@ button[type="submit"]:disabled::after {
         grid-template-columns: 1fr;
         gap: var(--space-4);
         padding: 0 var(--space-2);
+        overflow-x: hidden;
+    }
+    
+    .business-card {
+        max-width: 100%;
+        margin: 0;
     }
     
     .form-row {
@@ -1755,5 +1765,20 @@ textarea:focus {
         break-inside: avoid;
         box-shadow: none !important;
         border: 1px solid var(--border) !important;
+    }
+    
+    .business-actions {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+    
+    .btn-whatsapp,
+    .btn-profile,
+    .btn-secondary,
+    .btn-delete {
+        flex: none;
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--font-size-sm);
     }
 }
