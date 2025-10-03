@@ -513,6 +513,7 @@ a:hover {
     cursor: pointer;
     transition: background-color var(--transition-fast);
     gap: var(--space-3);
+    position: relative;
 }
 
 .program-header:hover {
@@ -546,6 +547,38 @@ a:hover {
     font-size: var(--font-size-lg);
     font-weight: 600;
     margin: 0;
+}
+
+.expand-indicator {
+    position: absolute;
+    right: var(--space-4);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg);
+    border-radius: 50%;
+    color: var(--muted);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    border: 1px solid var(--border);
+}
+
+.program-header:hover .expand-indicator {
+    background-color: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+}
+
+.program-card.active .expand-indicator {
+    background-color: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+    transform: translateY(-50%) rotate(45deg);
 }
 
 .program-content {
@@ -731,48 +764,66 @@ a:hover {
 
 .business-card {
     background-color: var(--white);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     transition: all var(--transition-normal);
     border: 1px solid var(--border);
     animation: fadeInUp 0.6s ease-out;
-    max-width: 320px;
+    max-width: 400px;
     margin: 0 auto;
 }
 
 .business-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
-}
-
-.business-image {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    background-color: var(--bg);
+    border-color: var(--primary);
 }
 
 .business-content {
-    padding: var(--space-4);
+    padding: var(--space-5);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+}
+
+.business-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: var(--bg);
+    flex-shrink: 0;
+    border: 2px solid var(--border);
+    transition: border-color var(--transition-fast);
+}
+
+.business-card:hover .business-image {
+    border-color: var(--primary);
+}
+
+.business-info {
+    flex: 1;
+    min-width: 0;
 }
 
 .business-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-2);
 }
 
 .business-name {
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-lg);
     font-weight: 600;
     color: var(--text);
     margin: 0;
+    line-height: 1.3;
 }
 
 .category-badge {
-    padding: var(--space-1) var(--space-3);
+    padding: var(--space-1) var(--space-2);
     background-color: var(--primary);
     color: var(--white);
     border-radius: var(--radius-sm);
@@ -780,6 +831,7 @@ a:hover {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    flex-shrink: 0;
 }
 
 .business-description {
@@ -796,15 +848,18 @@ a:hover {
 
 .business-actions {
     display: flex;
-    gap: var(--space-3);
-    flex-wrap: wrap;
+    gap: var(--space-2);
+    flex-wrap: nowrap;
+    margin-top: var(--space-3);
 }
 
 .btn-whatsapp {
     background-color: #25D366;
     color: var(--white);
     flex: 1;
-    min-width: 120px;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
 }
 
 .btn-whatsapp:hover {
@@ -815,11 +870,28 @@ a:hover {
     background-color: var(--accent);
     color: var(--white);
     flex: 1;
-    min-width: 120px;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
 }
 
 .btn-profile:hover {
     background-color: var(--primary);
+}
+
+.btn-secondary {
+    background-color: var(--bg);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    flex: 1;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background-color: var(--border);
+    color: var(--text);
 }
 
 /* Empty State */
@@ -1204,6 +1276,27 @@ a:hover {
     max-height: 120px;
 }
 
+.other-tag-input {
+    margin-top: var(--space-2);
+}
+
+.other-tag-input input {
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    transition: border-color var(--transition-fast);
+    background-color: var(--white);
+}
+
+.other-tag-input input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.1);
+}
+
 .error-message {
     color: var(--error);
     font-size: var(--font-size-sm);
@@ -1469,6 +1562,7 @@ a:hover {
     .modal-body {
         padding: var(--space-4);
         height: calc(100% - 70px);
+        max-height: 75vh;
     }
     
     .submit-form {

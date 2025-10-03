@@ -158,19 +158,14 @@ function setupEventListeners() {
     // Program card toggle functionality
     setupProgramCards();
     
-    // Tag input functionality
-    const addTagBtn = document.getElementById('addTagBtn');
-    const tagInput = document.getElementById('tagInput');
+    // Tag dropdown functionality
+    const tagsSelect = document.getElementById('tags');
+    const otherTagInput = document.getElementById('otherTagInput');
+    const customTagInput = document.getElementById('customTag');
     const imageInput = document.getElementById('image');
     
-    if (addTagBtn) addTagBtn.addEventListener('click', addTag);
-    if (tagInput) {
-        tagInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addTag();
-            }
-        });
+    if (tagsSelect) {
+        tagsSelect.addEventListener('change', handleTagChange);
     }
     
     // Image preview
@@ -331,14 +326,15 @@ function createBusinessCard(listing) {
     
     return `
         <article class="business-card" data-id="${listing.id}">
-            <img src="${imageSrc}" alt="${listing.name}" class="business-image" loading="lazy">
             <div class="business-content">
-                <div class="business-header">
-                    <h3 class="business-name">${escapeHtml(listing.name)}</h3>
-                    <span class="category-badge">${listing.category}</span>
-                </div>
-                <p class="business-description">${escapeHtml(listing.description)}</p>
-                <div class="business-actions">
+                <img src="${imageSrc}" alt="${listing.name}" class="business-image" loading="lazy">
+                <div class="business-info">
+                    <div class="business-header">
+                        <h3 class="business-name">${escapeHtml(listing.name)}</h3>
+                        <span class="category-badge">${listing.category}</span>
+                    </div>
+                    <p class="business-description">${escapeHtml(listing.description)}</p>
+                    <div class="business-actions">
                     ${listing.contactMethod === 'whatsapp' ? 
                         `<button class="btn btn-whatsapp" aria-label="Contact via WhatsApp">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -351,6 +347,7 @@ function createBusinessCard(listing) {
                     <button class="btn btn-profile" aria-label="View profile">
                         View Profile
                     </button>
+                    </div>
                 </div>
             </div>
         </article>
@@ -514,9 +511,15 @@ function handleFormSubmit(e) {
     }
     
     const formData = new FormData(elements.submitForm);
-    const tags = Array.from(document.querySelectorAll('.tag-item')).map(tag => 
-        tag.querySelector('.tag-text').textContent
-    );
+    const tagsSelect = document.getElementById('tags');
+    const customTagInput = document.getElementById('customTag');
+    let tags = [];
+    
+    if (tagsSelect.value === 'other' && customTagInput.value.trim()) {
+        tags = [customTagInput.value.trim()];
+    } else if (tagsSelect.value && tagsSelect.value !== 'other') {
+        tags = [tagsSelect.value];
+    }
     
     const newListing = {
         id: generateId(),
@@ -849,6 +852,20 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+/**
+ * Handle tag dropdown change
+ */
+function handleTagChange() {
+    const tagsSelect = document.getElementById('tags');
+    const otherTagInput = document.getElementById('otherTagInput');
+    
+    if (tagsSelect.value === 'other') {
+        otherTagInput.style.display = 'block';
+    } else {
+        otherTagInput.style.display = 'none';
+    }
 }
 
 /**

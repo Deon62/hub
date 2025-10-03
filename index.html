@@ -74,6 +74,7 @@
                             <div class="step-info">
                                 <h3>Post Your Business</h3>
                             </div>
+                            <div class="expand-indicator">+</div>
                         </div>
                         <div class="program-content">
                             <p>Share your business or service with fellow students. Fill out our simple form with your business details, contact information, and what you offer. It takes just a few minutes and is completely free for all students.</p>
@@ -92,6 +93,7 @@
                             <div class="step-info">
                                 <h3>Browse & Discover</h3>
                             </div>
+                            <div class="expand-indicator">+</div>
                         </div>
                         <div class="program-content">
                             <p>Find amazing businesses and services from students. Explore our directory of student businesses organized by category. Use our search and filter tools to find exactly what you're looking for.</p>
@@ -110,6 +112,7 @@
                             <div class="step-info">
                                 <h3>Connect & Support</h3>
                             </div>
+                            <div class="expand-indicator">+</div>
                         </div>
                         <div class="program-content">
                             <p>Contact businesses directly and support your peers. Connect directly with student entrepreneurs through WhatsApp, phone, or email. Support your fellow students and build a stronger campus community.</p>
@@ -128,6 +131,7 @@
                             <div class="step-info">
                                 <h3>Grow Together</h3>
                             </div>
+                            <div class="expand-indicator">+</div>
                         </div>
                         <div class="program-content">
                             <p>Build lasting relationships and grow your business within the student community. Get feedback, referrals, and support from fellow entrepreneurs while helping others succeed.</p>
@@ -413,11 +417,16 @@
 
                     <div class="form-group">
                         <label for="tags">Tags (Optional)</label>
-                        <div class="tag-input">
-                            <input type="text" id="tagInput" placeholder="Add tags like 'budget', 'delivery', 'discount'">
-                            <button type="button" id="addTagBtn">Add</button>
+                        <select id="tags" name="tags">
+                            <option value="">Select a tag</option>
+                            <option value="budget">Budget</option>
+                            <option value="delivery">Home Delivery</option>
+                            <option value="discount">Student Discount</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="other-tag-input" id="otherTagInput" style="display: none;">
+                            <input type="text" id="customTag" placeholder="Enter your custom tag">
                         </div>
-                        <div class="tag-list" id="tagList"></div>
                     </div>
 
                     <div class="form-group">
