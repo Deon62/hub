@@ -550,7 +550,9 @@ function closeProfileModal() {
 function openSubmitModal() {
     // Check if submit modal exists (not all pages have it)
     if (!elements.submitModal) {
-        console.log('Submit modal not found on this page');
+        console.log('Submit modal not found on this page, redirecting to home page');
+        // Redirect to home page where the modal exists
+        window.location.href = 'index.html#post-hustle';
         return;
     }
     
