@@ -12,9 +12,13 @@ let currentFilters = {
     search: ''
 };
 
+// Check if we're on the home page or businesses page
+const isHomePage = window.location.pathname === '/' || window.location.pathname.endsWith('index.html');
+const isBusinessesPage = window.location.pathname.endsWith('businesses.html');
+
 // DOM Elements
 const elements = {
-    businessGrid: document.getElementById('businessGrid'),
+    businessGrid: document.getElementById('businessGrid') || document.getElementById('featuredBusinessGrid'),
     searchInput: document.getElementById('searchInput'),
     resultsCount: document.getElementById('resultsCount'),
     emptyState: document.getElementById('emptyState'),
@@ -288,16 +292,28 @@ function filterListings() {
  * Render listings to the grid
  */
 function renderListings() {
-    if (filteredListings.length === 0) {
+    // Determine which listings to show based on the page
+    let listingsToShow = filteredListings;
+    
+    if (isHomePage) {
+        // Show only first 3 businesses as featured on home page
+        listingsToShow = filteredListings.slice(0, 3);
+    }
+    
+    if (listingsToShow.length === 0) {
         elements.businessGrid.style.display = 'none';
-        elements.emptyState.style.display = 'block';
+        if (elements.emptyState) {
+            elements.emptyState.style.display = 'block';
+        }
         return;
     }
     
     elements.businessGrid.style.display = 'grid';
-    elements.emptyState.style.display = 'none';
+    if (elements.emptyState) {
+        elements.emptyState.style.display = 'none';
+    }
     
-    elements.businessGrid.innerHTML = filteredListings.map(listing => createBusinessCard(listing)).join('');
+    elements.businessGrid.innerHTML = listingsToShow.map(listing => createBusinessCard(listing)).join('');
     
     // Add event listeners to new cards
     document.querySelectorAll('.btn-profile').forEach(btn => {

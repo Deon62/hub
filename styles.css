@@ -762,6 +762,46 @@ a:hover {
     margin-bottom: var(--space-12);
 }
 
+/* View More Section */
+.view-more-section {
+    text-align: center;
+    margin-top: var(--space-8);
+    padding: var(--space-6) 0;
+}
+
+.view-more-section .btn {
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+}
+
+.view-more-section .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(13, 148, 136, 0.3);
+}
+
+/* Back to Home Section */
+.back-to-home {
+    text-align: center;
+    margin-top: var(--space-8);
+    padding: var(--space-6) 0;
+}
+
+.back-to-home .btn {
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+}
+
+.back-to-home .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(13, 148, 136, 0.2);
+}
+
 .business-card {
     background-color: var(--white);
     border-radius: var(--radius-lg);
