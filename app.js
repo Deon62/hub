@@ -130,50 +130,75 @@ function setupEventListeners() {
     });
     
     // Modal controls
-    document.getElementById('postHustleBtn').addEventListener('click', openSubmitModal);
-    document.getElementById('heroPostBtn').addEventListener('click', openSubmitModal);
-    document.getElementById('footerPostBtn').addEventListener('click', openSubmitModal);
-    document.getElementById('closeSubmitModal').addEventListener('click', closeSubmitModal);
-    document.getElementById('closeProfileModal').addEventListener('click', closeProfileModal);
-    document.getElementById('cancelSubmit').addEventListener('click', closeSubmitModal);
+    const postHustleBtn = document.getElementById('postHustleBtn');
+    const heroPostBtn = document.getElementById('heroPostBtn');
+    const footerPostBtn = document.getElementById('footerPostBtn');
+    const closeSubmitModal = document.getElementById('closeSubmitModal');
+    const closeProfileModal = document.getElementById('closeProfileModal');
+    const cancelSubmit = document.getElementById('cancelSubmit');
+    
+    if (postHustleBtn) postHustleBtn.addEventListener('click', openSubmitModal);
+    if (heroPostBtn) heroPostBtn.addEventListener('click', openSubmitModal);
+    if (footerPostBtn) footerPostBtn.addEventListener('click', openSubmitModal);
+    if (closeSubmitModal) closeSubmitModal.addEventListener('click', closeSubmitModal);
+    if (closeProfileModal) closeProfileModal.addEventListener('click', closeProfileModal);
+    if (cancelSubmit) cancelSubmit.addEventListener('click', closeSubmitModal);
     
     // Form submission
-    elements.submitForm.addEventListener('submit', handleFormSubmit);
+    if (elements.submitForm) elements.submitForm.addEventListener('submit', handleFormSubmit);
     
     // Export functionality
-    elements.exportBtn.addEventListener('click', exportListings);
+    if (elements.exportBtn) elements.exportBtn.addEventListener('click', exportListings);
     
     // FAQ accordion
     document.querySelectorAll('.faq-question').forEach(question => {
         question.addEventListener('click', toggleFAQ);
     });
     
+    // Program card toggle functionality
+    setupProgramCards();
+    
     // Tag input functionality
-    document.getElementById('addTagBtn').addEventListener('click', addTag);
-    document.getElementById('tagInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            addTag();
-        }
-    });
+    const addTagBtn = document.getElementById('addTagBtn');
+    const tagInput = document.getElementById('tagInput');
+    const imageInput = document.getElementById('image');
+    
+    if (addTagBtn) addTagBtn.addEventListener('click', addTag);
+    if (tagInput) {
+        tagInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTag();
+            }
+        });
+    }
     
     // Image preview
-    document.getElementById('image').addEventListener('change', handleImagePreview);
+    if (imageInput) imageInput.addEventListener('change', handleImagePreview);
     
     // Modal backdrop clicks
-    elements.profileModal.addEventListener('click', (e) => {
-        if (e.target === elements.profileModal) closeProfileModal();
-    });
-    elements.submitModal.addEventListener('click', (e) => {
-        if (e.target === elements.submitModal) closeSubmitModal();
-    });
+    if (elements.profileModal) {
+        elements.profileModal.addEventListener('click', (e) => {
+            if (e.target === elements.profileModal) closeProfileModal();
+        });
+    }
+    if (elements.submitModal) {
+        elements.submitModal.addEventListener('click', (e) => {
+            if (e.target === elements.submitModal) closeSubmitModal();
+        });
+    }
     
     // Hamburger menu
-    document.getElementById('hamburgerBtn').addEventListener('click', toggleMobileMenu);
-    document.getElementById('mobilePostBtn').addEventListener('click', () => {
-        openSubmitModal();
-        closeMobileMenu();
-    });
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const mobilePostBtn = document.getElementById('mobilePostBtn');
+    
+    if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMobileMenu);
+    if (mobilePostBtn) {
+        mobilePostBtn.addEventListener('click', () => {
+            openSubmitModal();
+            closeMobileMenu();
+        });
+    }
     
     // Close mobile menu when clicking on links
     document.querySelectorAll('.mobile-nav-link').forEach(link => {
@@ -800,6 +825,47 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+/**
+ * Setup program cards toggle functionality
+ */
+function setupProgramCards() {
+    const programCards = document.querySelectorAll('.program-card');
+    console.log('Found program cards:', programCards.length); // Debug log
+    
+    if (programCards.length === 0) {
+        console.log('No program cards found, retrying in 100ms...');
+        setTimeout(setupProgramCards, 100);
+        return;
+    }
+    
+    programCards.forEach((card, index) => {
+        const header = card.querySelector('.program-header');
+        console.log(`Setting up card ${index + 1}:`, header); // Debug log
+        
+        if (!header) {
+            console.error(`No header found for card ${index + 1}`);
+            return;
+        }
+        
+        header.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Card clicked:', index + 1); // Debug log
+            
+            // Close other open cards
+            programCards.forEach(otherCard => {
+                if (otherCard !== card && otherCard.classList.contains('active')) {
+                    otherCard.classList.remove('active');
+                }
+            });
+            
+            // Toggle current card
+            card.classList.toggle('active');
+            console.log('Card active state:', card.classList.contains('active')); // Debug log
+        });
+    });
 }
 
 // Initialize the application when DOM is loaded
