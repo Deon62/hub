@@ -1042,39 +1042,54 @@ a:hover {
 }
 
 .modal-large {
-    width: 600px;
+    width: 90vw;
+    max-width: 1200px;
+    height: 90vh;
+    max-height: 800px;
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-6);
+    padding: var(--space-4) var(--space-5);
     border-bottom: 1px solid var(--border);
+    background-color: var(--white);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 .modal-header h3 {
     margin: 0;
     color: var(--text);
+    font-size: var(--font-size-xl);
+    font-weight: 600;
 }
 
 .modal-close {
     background: none;
-    border: none;
+    border: 1px solid var(--border);
     cursor: pointer;
     padding: var(--space-2);
     border-radius: var(--radius-sm);
     color: var(--muted);
     transition: all var(--transition-fast);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-close:hover {
     background-color: var(--bg);
     color: var(--text);
+    border-color: var(--primary);
 }
 
 .modal-body {
     padding: var(--space-6);
+    height: calc(100% - 80px);
+    overflow-y: auto;
 }
 
 /* Profile Modal Specific */
@@ -1138,17 +1153,17 @@ a:hover {
     font-weight: 500;
 }
 
-/* Form Styles */
+/* Form Styles - Minimal & Compact */
 .submit-form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
+    gap: var(--space-4);
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
+    gap: var(--space-3);
 }
 
 .form-group {
@@ -1159,7 +1174,8 @@ a:hover {
 .form-group label {
     font-weight: 500;
     color: var(--text);
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-1);
+    font-size: var(--font-size-sm);
 }
 
 .form-group input,
@@ -1168,9 +1184,10 @@ a:hover {
     padding: var(--space-3);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     font-family: inherit;
     transition: border-color var(--transition-fast);
+    background-color: var(--white);
 }
 
 .form-group input:focus,
@@ -1178,12 +1195,13 @@ a:hover {
 .form-group textarea:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.1);
 }
 
 .form-group textarea {
     resize: vertical;
-    min-height: 100px;
+    min-height: 80px;
+    max-height: 120px;
 }
 
 .error-message {
@@ -1253,10 +1271,17 @@ a:hover {
 
 .form-actions {
     display: flex;
-    gap: var(--space-4);
+    gap: var(--space-3);
     justify-content: flex-end;
     padding-top: var(--space-4);
     border-top: 1px solid var(--border);
+    margin-top: var(--space-2);
+}
+
+.form-actions .btn {
+    padding: var(--space-3) var(--space-5);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
 }
 
 /* Toast Notifications */
@@ -1428,6 +1453,26 @@ a:hover {
     .modal-content {
         margin: var(--space-4);
         max-width: calc(100vw - 2rem);
+    }
+    
+    .modal-large {
+        width: 95vw;
+        height: 95vh;
+        max-width: none;
+        max-height: none;
+    }
+    
+    .modal-header {
+        padding: var(--space-3) var(--space-4);
+    }
+    
+    .modal-body {
+        padding: var(--space-4);
+        height: calc(100% - 70px);
+    }
+    
+    .submit-form {
+        gap: var(--space-3);
     }
     
     .toast-container {

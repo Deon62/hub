@@ -133,15 +133,15 @@ function setupEventListeners() {
     const postHustleBtn = document.getElementById('postHustleBtn');
     const heroPostBtn = document.getElementById('heroPostBtn');
     const footerPostBtn = document.getElementById('footerPostBtn');
-    const closeSubmitModal = document.getElementById('closeSubmitModal');
-    const closeProfileModal = document.getElementById('closeProfileModal');
+    const closeSubmitModalBtn = document.getElementById('closeSubmitModal');
+    const closeProfileModalBtn = document.getElementById('closeProfileModal');
     const cancelSubmit = document.getElementById('cancelSubmit');
     
     if (postHustleBtn) postHustleBtn.addEventListener('click', openSubmitModal);
     if (heroPostBtn) heroPostBtn.addEventListener('click', openSubmitModal);
     if (footerPostBtn) footerPostBtn.addEventListener('click', openSubmitModal);
-    if (closeSubmitModal) closeSubmitModal.addEventListener('click', closeSubmitModal);
-    if (closeProfileModal) closeProfileModal.addEventListener('click', closeProfileModal);
+    if (closeSubmitModalBtn) closeSubmitModalBtn.addEventListener('click', closeSubmitModal);
+    if (closeProfileModalBtn) closeProfileModalBtn.addEventListener('click', closeProfileModal);
     if (cancelSubmit) cancelSubmit.addEventListener('click', closeSubmitModal);
     
     // Form submission
@@ -444,6 +444,12 @@ function openProfileModal(listingId) {
     elements.profileModal.setAttribute('aria-hidden', 'false');
     elements.profileModal.classList.add('show');
     document.body.style.overflow = 'hidden';
+    
+    // Focus the close button for accessibility
+    setTimeout(() => {
+        const closeBtn = document.getElementById('closeProfileModal');
+        if (closeBtn) closeBtn.focus();
+    }, 100);
 }
 
 /**
@@ -453,6 +459,12 @@ function closeProfileModal() {
     elements.profileModal.setAttribute('aria-hidden', 'true');
     elements.profileModal.classList.remove('show');
     document.body.style.overflow = '';
+    
+    // Remove focus from any focused element inside the modal
+    const focusedElement = document.activeElement;
+    if (focusedElement && elements.profileModal.contains(focusedElement)) {
+        focusedElement.blur();
+    }
 }
 
 /**
@@ -462,6 +474,12 @@ function openSubmitModal() {
     elements.submitModal.setAttribute('aria-hidden', 'false');
     elements.submitModal.classList.add('show');
     document.body.style.overflow = 'hidden';
+    
+    // Focus the close button for accessibility
+    setTimeout(() => {
+        const closeBtn = document.getElementById('closeSubmitModal');
+        if (closeBtn) closeBtn.focus();
+    }, 100);
     
     // Reset form
     elements.submitForm.reset();
@@ -477,6 +495,12 @@ function closeSubmitModal() {
     elements.submitModal.setAttribute('aria-hidden', 'true');
     elements.submitModal.classList.remove('show');
     document.body.style.overflow = '';
+    
+    // Remove focus from any focused element inside the modal
+    const focusedElement = document.activeElement;
+    if (focusedElement && elements.submitModal.contains(focusedElement)) {
+        focusedElement.blur();
+    }
 }
 
 /**
