@@ -238,8 +238,26 @@ a:hover {
     padding: 0 var(--space-4);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     height: 64px;
+}
+
+/* Logo Styles */
+.logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.logo-img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.05);
 }
 
 /* Desktop Navigation */
@@ -1742,6 +1760,10 @@ button[type="submit"]:disabled::after {
     .nav-container {
         padding: 0 var(--space-4);
         height: 64px;
+    }
+    
+    .logo-img {
+        height: 32px;
     }
     
     .nav-links {
