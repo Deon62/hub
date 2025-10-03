@@ -2028,7 +2028,7 @@ textarea:focus {
 }
 
 .pricing-section {
-    padding: var(--space-20) 0;
+    padding: var(--space-16) 0;
     background-color: var(--bg);
 }
 
@@ -2043,7 +2043,7 @@ textarea:focus {
 .pricing-card {
     background-color: var(--white);
     border-radius: var(--radius-lg);
-    padding: var(--space-4);
+    padding: var(--space-3);
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
     border: 2px solid transparent;
@@ -2179,7 +2179,7 @@ textarea:focus {
 }
 
 .pricing-faq {
-    padding: var(--space-20) 0;
+    padding: var(--space-16) 0;
     background-color: var(--white);
 }
 
@@ -2823,7 +2823,7 @@ textarea:focus {
     }
     
     .pricing-section {
-        padding: var(--space-16) 0;
+        padding: var(--space-12) 0;
     }
     
     .pricing-grid {
@@ -2833,7 +2833,7 @@ textarea:focus {
     }
     
     .pricing-card {
-        padding: var(--space-6);
+        padding: var(--space-4);
     }
     
     .pricing-card-featured {
@@ -2854,7 +2854,7 @@ textarea:focus {
     }
     
     .pricing-faq {
-        padding: var(--space-16) 0;
+        padding: var(--space-12) 0;
     }
     
     /* FAQ section uses program card mobile styles */
