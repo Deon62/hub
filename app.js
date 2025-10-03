@@ -166,7 +166,12 @@ function setupEventListeners() {
     if (cancelSubmit) cancelSubmit.addEventListener('click', closeSubmitModal);
     
     // Form submission
-    if (elements.submitForm) elements.submitForm.addEventListener('submit', handleFormSubmit);
+    if (elements.submitForm) {
+        console.log('Setting up form submit listener');
+        elements.submitForm.addEventListener('submit', handleFormSubmit);
+    } else {
+        console.log('Submit form not found!');
+    }
     
     // Export functionality
     if (elements.exportBtn) elements.exportBtn.addEventListener('click', exportListings);
@@ -183,6 +188,9 @@ function setupEventListeners() {
     
     // Business profile page functionality
     setupBusinessProfilePage();
+    
+    // Testimonials scrolling functionality
+    setupTestimonialsScrolling();
     
     // Tag dropdown functionality
     const tagsSelect = document.getElementById('tags');
@@ -596,7 +604,7 @@ function openSubmitModal() {
         // Reset submit button to default state
         const submitBtn = elements.submitForm.querySelector('button[type="submit"]');
         if (submitBtn) {
-            submitBtn.textContent = 'Post Your Business';
+            submitBtn.textContent = 'Post Your Hustle';
             submitBtn.disabled = false;
             submitBtn.style.opacity = '1';
             submitBtn.style.cursor = 'pointer';
@@ -626,14 +634,17 @@ function closeSubmitModal() {
  */
 function handleFormSubmit(e) {
     e.preventDefault();
+    console.log('Form submitted!'); // Debug log
     
     // Prevent multiple submissions
     const submitBtn = e.target.querySelector('button[type="submit"]');
     if (submitBtn.disabled) {
+        console.log('Submit button is disabled, preventing submission');
         return;
     }
     
     if (!validateForm()) {
+        console.log('Form validation failed');
         return;
     }
     
@@ -1394,6 +1405,41 @@ function setupBusinessProfilePage() {
     
     // Render the business profile
     renderBusinessProfile();
+}
+
+/**
+ * Setup testimonials scrolling functionality
+ */
+function setupTestimonialsScrolling() {
+    const testimonialsTrack = document.getElementById('testimonialsTrack');
+    if (!testimonialsTrack) return;
+    
+    // Ensure smooth scrolling animation
+    const testimonialsContainer = testimonialsTrack.parentElement;
+    if (testimonialsContainer) {
+        // Add smooth scrolling behavior
+        testimonialsContainer.style.overflow = 'hidden';
+        
+        // Pause animation on hover for better UX
+        testimonialsContainer.addEventListener('mouseenter', () => {
+            testimonialsTrack.style.animationPlayState = 'paused';
+        });
+        
+        testimonialsContainer.addEventListener('mouseleave', () => {
+            testimonialsTrack.style.animationPlayState = 'running';
+        });
+    }
+    
+    // Ensure the animation restarts properly
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                testimonialsTrack.style.animationPlayState = 'running';
+            }
+        });
+    });
+    
+    observer.observe(testimonialsTrack);
 }
 
 // Initialize the application when DOM is loaded
