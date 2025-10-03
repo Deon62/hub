@@ -83,10 +83,6 @@ function init() {
         toastContainer: document.getElementById('toastContainer')
     };
     
-    console.log('Initialized elements:', elements);
-    console.log('Business Grid Element:', elements.businessGrid);
-    console.log('Is Home Page:', isHomePage);
-    console.log('Is Businesses Page:', isBusinessesPage);
     
     loadListings();
     setupEventListeners();
@@ -301,21 +297,15 @@ function filterListings() {
  * Render listings to the grid
  */
 function renderListings() {
-    console.log('renderListings called');
-    console.log('filteredListings length:', filteredListings.length);
-    console.log('businessGrid element:', elements.businessGrid);
-    
     // Determine which listings to show based on the page
     let listingsToShow = filteredListings;
     
     if (isHomePage) {
         // Show only first 3 businesses as featured on home page
         listingsToShow = filteredListings.slice(0, 3);
-        console.log('Home page - showing first 3:', listingsToShow.length);
     }
     
     if (listingsToShow.length === 0) {
-        console.log('No listings to show');
         if (elements.businessGrid) {
             elements.businessGrid.style.display = 'none';
         }
@@ -328,9 +318,6 @@ function renderListings() {
     if (elements.businessGrid) {
         elements.businessGrid.style.display = 'grid';
         elements.businessGrid.innerHTML = listingsToShow.map(listing => createBusinessCard(listing)).join('');
-        console.log('Rendered', listingsToShow.length, 'businesses');
-    } else {
-        console.error('businessGrid element not found!');
     }
     
     if (elements.emptyState) {
@@ -352,6 +339,16 @@ function renderListings() {
             if (listing && listing.contactMethod === 'whatsapp') {
                 window.open(`https://wa.me/${listing.contactInfo.replace(/\D/g, '')}`, '_blank');
             }
+        });
+    });
+    
+    // Add event listeners for delete buttons
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const businessId = e.target.closest('.btn-delete').dataset.businessId;
+            deleteBusiness(businessId);
         });
     });
 }
@@ -385,6 +382,14 @@ function createBusinessCard(listing) {
                     <button class="btn btn-profile" aria-label="View profile">
                         View Profile
                     </button>
+                    ${isUserCreatedBusiness(listing) ? 
+                        `<button class="btn btn-delete" aria-label="Delete business" data-business-id="${listing.id}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                            </svg>
+                            Delete
+                        </button>` : ''
+                    }
                     </div>
                 </div>
             </div>
@@ -519,8 +524,18 @@ function openSubmitModal() {
     // Reset form
     elements.submitForm.reset();
     clearFormErrors();
-    document.getElementById('tagList').innerHTML = '';
-    document.getElementById('imagePreview').innerHTML = '';
+    
+    // Clear tag list if it exists
+    const tagList = document.getElementById('tagList');
+    if (tagList) {
+        tagList.innerHTML = '';
+    }
+    
+    // Clear image preview if it exists
+    const imagePreview = document.getElementById('imagePreview');
+    if (imagePreview) {
+        imagePreview.innerHTML = '';
+    }
 }
 
 /**
@@ -544,55 +559,149 @@ function closeSubmitModal() {
 function handleFormSubmit(e) {
     e.preventDefault();
     
+    // Prevent multiple submissions
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    if (submitBtn.disabled) {
+        return;
+    }
+    
     if (!validateForm()) {
         return;
     }
     
-    const formData = new FormData(elements.submitForm);
-    const tagsSelect = document.getElementById('tags');
-    const customTagInput = document.getElementById('customTag');
-    let tags = [];
+    // Set processing state
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Processing...';
+    submitBtn.style.opacity = '0.7';
+    submitBtn.style.cursor = 'not-allowed';
     
-    if (tagsSelect.value === 'other' && customTagInput.value.trim()) {
-        tags = [customTagInput.value.trim()];
-    } else if (tagsSelect.value && tagsSelect.value !== 'other') {
-        tags = [tagsSelect.value];
+    // Simulate processing time
+    setTimeout(() => {
+        try {
+            const formData = new FormData(elements.submitForm);
+            const tagsSelect = document.getElementById('tags');
+            const customTagInput = document.getElementById('customTag');
+            let tags = [];
+            
+            if (tagsSelect.value === 'other' && customTagInput.value.trim()) {
+                tags = [customTagInput.value.trim()];
+            } else if (tagsSelect.value && tagsSelect.value !== 'other') {
+                tags = [tagsSelect.value];
+            }
+            
+            const newListing = {
+                id: generateId(),
+                name: formData.get('businessName'),
+                category: formData.get('category'),
+                type: formData.get('type'),
+                description: formData.get('description'),
+                contactMethod: formData.get('contactMethod'),
+                contactInfo: formData.get('contactInfo'),
+                instagram: formData.get('instagram') || null,
+                location: formData.get('location') || null,
+                tags: tags,
+                image: document.getElementById('imagePreview').querySelector('img')?.src || null,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Add to listings
+            listings.unshift(newListing);
+            saveListings();
+            
+            // Update display
+            filterListings();
+            
+            // Clear form
+            elements.submitForm.reset();
+            clearFormPreview();
+            
+            // Close modal
+            closeSubmitModal();
+            
+            // Show success message
+            showToast('🎉 Business posted successfully! Redirecting to home...', 'success');
+            
+            // Navigate to home page after delay
+            setTimeout(() => {
+                if (isBusinessesPage) {
+                    window.location.href = 'index.html';
+                }
+            }, 2000);
+            
+        } catch (error) {
+            console.error('Error submitting business:', error);
+            showToast('Error posting business. Please try again.', 'error');
+            resetSubmitButton(submitBtn, originalText);
+        }
+    }, 2000); // 2 second processing time
+}
+
+/**
+ * Reset submit button to original state
+ */
+function resetSubmitButton(button, originalText) {
+    button.disabled = false;
+    button.textContent = originalText;
+    button.style.opacity = '1';
+    button.style.cursor = 'pointer';
+}
+
+/**
+ * Clear form preview elements
+ */
+function clearFormPreview() {
+    const tagList = document.getElementById('tagList');
+    if (tagList) {
+        tagList.innerHTML = '';
     }
     
-    const newListing = {
-        id: generateId(),
-        name: formData.get('businessName'),
-        category: formData.get('category'),
-        type: formData.get('type'),
-        description: formData.get('description'),
-        contactMethod: formData.get('contactMethod'),
-        contactInfo: formData.get('contactInfo'),
-        instagram: formData.get('instagram') || null,
-        location: formData.get('location') || null,
-        tags: tags,
-        image: document.getElementById('imagePreview').querySelector('img')?.src || null,
-        createdAt: new Date().toISOString()
-    };
+    const imagePreview = document.getElementById('imagePreview');
+    if (imagePreview) {
+        imagePreview.innerHTML = '';
+    }
+}
+
+/**
+ * Check if a business was created by the user (not a sample business)
+ */
+function isUserCreatedBusiness(listing) {
+    // Sample businesses have specific IDs, user-created ones have generated IDs
+    const sampleBusinessIds = ['mosi-mini-shop', 'njeris-salon', 'tech-tutor-mike'];
+    return !sampleBusinessIds.includes(listing.id);
+}
+
+/**
+ * Delete a business listing
+ */
+function deleteBusiness(businessId) {
+    // Show confirmation dialog
+    if (!confirm('Are you sure you want to delete this business? This action cannot be undone.')) {
+        return;
+    }
     
-    // Add to listings
-    listings.unshift(newListing);
+    // Find and remove the business from listings
+    const businessIndex = listings.findIndex(listing => listing.id === businessId);
+    if (businessIndex === -1) {
+        showToast('Business not found', 'error');
+        return;
+    }
+    
+    // Remove from listings
+    listings.splice(businessIndex, 1);
+    
+    // Update filtered listings
+    filteredListings = [...listings];
+    
+    // Save to localStorage
     saveListings();
     
     // Update display
-    filterListings();
+    renderListings();
+    updateResultsCount();
     
     // Show success message
-    showToast('Your business has been posted successfully!', 'success');
-    
-    // Close modal
-    closeSubmitModal();
-    
-    // Offer to download as JSON
-    setTimeout(() => {
-        if (confirm('Would you like to download your listing as a JSON file?')) {
-            downloadListingAsJSON(newListing);
-        }
-    }, 1000);
+    showToast('Business deleted successfully', 'success');
 }
 
 /**
@@ -659,8 +768,13 @@ function showFieldError(fieldName, message) {
     const field = elements.submitForm[fieldName];
     const errorElement = document.getElementById(`${fieldName}Error`);
     
-    field.closest('.form-group').classList.add('error');
-    errorElement.textContent = message;
+    if (field) {
+        field.closest('.form-group').classList.add('error');
+    }
+    
+    if (errorElement) {
+        errorElement.textContent = message;
+    }
 }
 
 /**
@@ -794,9 +908,11 @@ function downloadListingAsJSON(listing) {
  * Update results count
  */
 function updateResultsCount() {
-    const count = filteredListings.length;
-    const text = count === 1 ? '1 listing found' : `${count} listings found`;
-    elements.resultsCount.textContent = text;
+    if (elements.resultsCount) {
+        const count = filteredListings.length;
+        const text = count === 1 ? '1 listing found' : `${count} listings found`;
+        elements.resultsCount.textContent = text;
+    }
 }
 
 /**
@@ -852,7 +968,7 @@ function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     
-    const icon = type === 'success' ? '✓' : '⚠';
+    const icon = type === 'success' ? '🎉' : '⚠';
     
     toast.innerHTML = `
         <span class="toast-icon">${icon}</span>
@@ -867,13 +983,14 @@ function showToast(message, type = 'success') {
     // Trigger animation
     setTimeout(() => toast.classList.add('show'), 100);
     
-    // Auto remove after 5 seconds
+    // Auto remove after longer time for success messages
+    const autoRemoveTime = type === 'success' ? 8000 : 5000;
     setTimeout(() => {
         if (toast.parentElement) {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
         }
-    }, 5000);
+    }, autoRemoveTime);
 }
 
 /**
