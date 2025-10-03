@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Hustle Hub - Find & Share Student Businesses</title>
+    <meta name="description" content="Discover and share student-run businesses, services, and side hustles on campus">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav" role="navigation" aria-label="Main navigation">
+            <div class="nav-container">
+                <div class="nav-links">
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="#browse" class="nav-link">Browse</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                    <button class="btn btn-primary" id="postHustleBtn" aria-label="Post your hustle">
+                        Post Your Hustle
+                    </button>
+                </div>
+                <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-content">
+                <a href="#about" class="mobile-nav-link">About</a>
+                <a href="#browse" class="mobile-nav-link">Browse</a>
+                <a href="#contact" class="mobile-nav-link">Contact</a>
+                <button class="btn btn-primary mobile-post-btn" id="mobilePostBtn">Post Your Hustle</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h2 class="hero-title">Discover Amazing Student Businesses</h2>
+                    <p class="hero-subtitle">Find services, goods, and side hustles from fellow students. From tutoring to handmade crafts, discover what your campus has to offer.</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-large" id="heroPostBtn" aria-label="Post your hustle">
+                            Post Your Hustle
+                        </button>
+                        <a href="#browse" class="btn btn-secondary btn-large" aria-label="Browse listings">
+                            Browse Listings
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="how-it-works">
+                        <h3>How It Works</h3>
+                        <div class="steps">
+                            <div class="step">
+                                <div class="step-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14,2 14,8 20,8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                        <polyline points="10,9 9,9 8,9"/>
+                                    </svg>
+                                </div>
+                                <h4>1. Post</h4>
+                                <p>Share your business or service</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <path d="m21 21-4.35-4.35"/>
+                                    </svg>
+                                </div>
+                                <h4>2. Browse</h4>
+                                <p>Discover student businesses</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                    </svg>
+                                </div>
+                                <h4>3. Contact</h4>
+                                <p>Connect via WhatsApp</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Browse Section -->
+        <section class="browse" id="browse">
+            <div class="browse-container">
+                <div class="browse-header">
+                    <h2>Browse Student Businesses</h2>
+                    <p>Find exactly what you're looking for</p>
+                </div>
+
+                <!-- Search and Filters -->
+                <div class="search-filters">
+                    <div class="search-bar">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Search businesses, services, or categories..."
+                            aria-label="Search businesses"
+                        >
+                        <button class="search-btn" aria-label="Search">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="filters">
+                        <div class="category-filters">
+                            <button class="filter-chip active" data-category="all" aria-label="Show all categories">
+                                All
+                            </button>
+                            <button class="filter-chip" data-category="services" aria-label="Filter by services">
+                                Services
+                            </button>
+                            <button class="filter-chip" data-category="goods" aria-label="Filter by goods">
+                                Goods
+                            </button>
+                            <button class="filter-chip" data-category="food" aria-label="Filter by food">
+                                Food
+                            </button>
+                            <button class="filter-chip" data-category="fashion" aria-label="Filter by fashion">
+                                Fashion
+                            </button>
+                            <button class="filter-chip" data-category="beauty" aria-label="Filter by beauty">
+                                Beauty
+                            </button>
+                            <button class="filter-chip" data-category="tutoring" aria-label="Filter by tutoring">
+                                Tutoring
+                            </button>
+                        </div>
+
+                        <div class="tag-filters">
+                            <button class="tag-chip" data-tag="budget" aria-label="Filter by budget-friendly">
+                                Budget
+                            </button>
+                            <button class="tag-chip" data-tag="delivery" aria-label="Filter by home delivery">
+                                Home Delivery
+                            </button>
+                            <button class="tag-chip" data-tag="discount" aria-label="Filter by student discount">
+                                Student Discount
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Info -->
+                <div class="results-info">
+                    <span id="resultsCount">0 listings found</span>
+                    <button class="btn btn-outline btn-small" id="exportBtn" aria-label="Export all listings">
+                        Export All
+                    </button>
+                </div>
+
+                <!-- Business Grid -->
+                <div class="business-grid" id="businessGrid" role="grid" aria-label="Student business listings">
+                    <!-- Business cards will be dynamically inserted here -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-icon">🔍</div>
+                    <h3>No businesses found</h3>
+                    <p>Try adjusting your search or filters</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about" id="about">
+            <div class="about-container">
+                <h2>About Student Hustle Hub</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>We believe in the power of student entrepreneurship and community support. Student Hustle Hub connects students with amazing businesses, services, and side hustles run by their peers.</p>
+                        <p>Whether you're looking for tutoring, handmade crafts, food delivery, or beauty services, you'll find it here. And if you have a business to share, we'd love to help you reach more students!</p>
+                    </div>
+                    <div class="faq">
+                        <h3>Frequently Asked Questions</h3>
+                        <div class="faq-item">
+                            <button class="faq-question" aria-expanded="false" aria-controls="faq1">
+                                How do I post my business?
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-answer" id="faq1">
+                                <p>Click "Post Your Hustle" and fill out the simple form with your business details. It's completely free and takes just a few minutes!</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" aria-expanded="false" aria-controls="faq2">
+                                Is it free to use?
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-answer" id="faq2">
+                                <p>Yes! Posting and browsing is completely free for all students. We're here to support the student community.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" aria-expanded="false" aria-controls="faq3">
+                                How do I contact a business?
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-answer" id="faq3">
+                                <p>Most businesses provide WhatsApp contact. Click the WhatsApp button on any listing to start a conversation directly!</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question" aria-expanded="false" aria-controls="faq4">
+                                Is my contact information safe?
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-answer" id="faq4">
+                                <p>Your contact information is only visible to other students browsing the platform. We don't share data with third parties, but remember this is a public directory.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="social-links">
+                <a href="https://x.com/pinakle_org" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Follow us on X">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+                <a href="https://t.me/Deon_chinese" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Contact us on Telegram">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                </a>
+                <a href="mailto:pinakleorgltd@gmail.com" class="social-link" aria-label="Email us">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </a>
+                <a href="https://instagram.com/deon_lii" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Follow us on Instagram">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Pinakle Org. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Business Profile Modal -->
+    <div class="modal" id="profileModal" role="dialog" aria-labelledby="profileTitle" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="profileTitle">Business Profile</h3>
+                <button class="modal-close" id="closeProfileModal" aria-label="Close profile">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="profileContent">
+                <!-- Profile content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Listing Modal -->
+    <div class="modal" id="submitModal" role="dialog" aria-labelledby="submitTitle" aria-hidden="true">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="submitTitle">Post Your Hustle</h3>
+                <button class="modal-close" id="closeSubmitModal" aria-label="Close form">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="submitForm" class="submit-form">
+                    <div class="form-group">
+                        <label for="businessName">Business Name *</label>
+                        <input type="text" id="businessName" name="businessName" required aria-describedby="businessNameError">
+                        <div class="error-message" id="businessNameError"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Category *</label>
+                            <select id="category" name="category" required aria-describedby="categoryError">
+                                <option value="">Select category</option>
+                                <option value="services">Services</option>
+                                <option value="goods">Goods</option>
+                                <option value="food">Food</option>
+                                <option value="fashion">Fashion</option>
+                                <option value="beauty">Beauty</option>
+                                <option value="tutoring">Tutoring</option>
+                            </select>
+                            <div class="error-message" id="categoryError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="type">Type *</label>
+                            <select id="type" name="type" required aria-describedby="typeError">
+                                <option value="">Select type</option>
+                                <option value="goods">Goods</option>
+                                <option value="service">Service</option>
+                            </select>
+                            <div class="error-message" id="typeError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description *</label>
+                        <textarea id="description" name="description" rows="4" required aria-describedby="descriptionError" placeholder="Describe your business, what you offer, and any special details..."></textarea>
+                        <div class="error-message" id="descriptionError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactMethod">Contact Method *</label>
+                        <select id="contactMethod" name="contactMethod" required aria-describedby="contactMethodError">
+                            <option value="">Select contact method</option>
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="phone">Phone</option>
+                            <option value="email">Email</option>
+                        </select>
+                        <div class="error-message" id="contactMethodError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactInfo">Contact Information *</label>
+                        <input type="text" id="contactInfo" name="contactInfo" required aria-describedby="contactInfoError" placeholder="e.g., +254712345678 or your@email.com">
+                        <div class="error-message" id="contactInfoError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="instagram">Instagram/Links (Optional)</label>
+                        <input type="url" id="instagram" name="instagram" placeholder="https://instagram.com/yourhandle or other links">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location (Optional)</label>
+                        <input type="text" id="location" name="location" placeholder="e.g., Main Campus, Dorm 5, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tags">Tags (Optional)</label>
+                        <div class="tag-input">
+                            <input type="text" id="tagInput" placeholder="Add tags like 'budget', 'delivery', 'discount'">
+                            <button type="button" id="addTagBtn">Add</button>
+                        </div>
+                        <div class="tag-list" id="tagList"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image">Business Image (Optional)</label>
+                        <input type="file" id="image" name="image" accept="image/*" aria-describedby="imagePreview">
+                        <div class="image-preview" id="imagePreview"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelSubmit">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Post Your Hustle</button>
+                    </div>
+                </form>
+
+                <!-- Google Form Fallback (commented out) -->
+                <!-- 
+                <div class="google-form-fallback">
+                    <p>Prefer Google Forms? <a href="https://forms.google.com/your-form-link" target="_blank">Use our Google Form instead</a></p>
+                </div>
+                -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
