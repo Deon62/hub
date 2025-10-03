@@ -34,6 +34,9 @@ const sampleListings = [
         location: 'Main Campus, Dorm 3',
         tags: ['budget', 'delivery'],
         image: null,
+        rating: 4.5,
+        reviewCount: 23,
+        status: 'available',
         createdAt: new Date().toISOString()
     },
     {
@@ -48,6 +51,9 @@ const sampleListings = [
         location: 'Off-campus, 5 mins walk',
         tags: ['discount'],
         image: null,
+        rating: 4.8,
+        reviewCount: 45,
+        status: 'available',
         createdAt: new Date().toISOString()
     },
     {
@@ -62,6 +68,9 @@ const sampleListings = [
         location: 'Campus delivery available',
         tags: ['delivery', 'budget'],
         image: null,
+        rating: 4.2,
+        reviewCount: 18,
+        status: 'available',
         createdAt: new Date().toISOString()
     }
 ];
@@ -351,6 +360,16 @@ function renderListings() {
             deleteBusiness(businessId);
         });
     });
+    
+    // Add event listeners for edit buttons
+    document.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const businessId = e.target.closest('.btn-edit').dataset.businessId;
+            editBusiness(businessId);
+        });
+    });
 }
 
 /**
@@ -368,28 +387,38 @@ function createBusinessCard(listing) {
                         <h3 class="business-name">${escapeHtml(listing.name)}</h3>
                         <span class="category-badge">${listing.category}</span>
                     </div>
+                    <div class="business-status ${listing.status || 'available'}">${(listing.status || 'available') === 'available' ? 'Available' : 'Closed'}</div>
                     <p class="business-description">${escapeHtml(listing.description)}</p>
+                    <div class="business-rating">
+                        <div class="rating-stars">${generateStarRating(listing.rating || 0)}</div>
+                        <span class="rating-text">${(listing.rating || 0).toFixed(1)} (${listing.reviewCount || 0} reviews)</span>
+                    </div>
                     <div class="business-actions">
                     ${listing.contactMethod === 'whatsapp' ? 
                         `<button class="btn btn-whatsapp" aria-label="Contact via WhatsApp">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
                             </svg>
-                            WhatsApp
                         </button>` : 
-                        `<button class="btn btn-secondary" disabled>Contact</button>`
+                        `<button class="btn btn-secondary" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                        </button>`
                     }
-                    <button class="btn btn-profile" aria-label="View profile">
-                        View Profile
-                    </button>
                     ${isUserCreatedBusiness(listing) ? 
-                        `<button class="btn btn-delete" aria-label="Delete business" data-business-id="${listing.id}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        `<button class="btn btn-edit" aria-label="Edit business" data-business-id="${listing.id}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                            </svg>
+                        </button>
+                        <button class="btn btn-delete" aria-label="Delete business" data-business-id="${listing.id}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
                             </svg>
-                            Delete
                         </button>` : ''
                     }
+                    <a href="#" class="view-bsn-link" onclick="openProfileModal('${listing.id}'); return false;">View BSN</a>
                     </div>
                 </div>
             </div>
@@ -590,23 +619,67 @@ function handleFormSubmit(e) {
                 tags = [tagsSelect.value];
             }
             
-            const newListing = {
-                id: generateId(),
-                name: formData.get('businessName'),
-                category: formData.get('category'),
-                type: formData.get('type'),
-                description: formData.get('description'),
-                contactMethod: formData.get('contactMethod'),
-                contactInfo: formData.get('contactInfo'),
-                instagram: formData.get('instagram') || null,
-                location: formData.get('location') || null,
-                tags: tags,
-                image: document.getElementById('imagePreview').querySelector('img')?.src || null,
-                createdAt: new Date().toISOString()
-            };
+            const isEditing = elements.submitForm.dataset.editingId;
+            let businessData;
             
-            // Add to listings
-            listings.unshift(newListing);
+            if (isEditing) {
+                // Update existing business
+                const existingBusiness = listings.find(l => l.id === isEditing);
+                businessData = {
+                    ...existingBusiness,
+                    name: formData.get('businessName'),
+                    category: formData.get('category'),
+                    type: formData.get('type'),
+                    description: formData.get('description'),
+                    contactMethod: formData.get('contactMethod'),
+                    contactInfo: formData.get('contactInfo'),
+                    instagram: formData.get('instagram') || null,
+                    location: formData.get('location') || null,
+                    tags: tags,
+                    image: document.getElementById('imagePreview').querySelector('img')?.src || existingBusiness.image,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                // Update in listings
+                const businessIndex = listings.findIndex(l => l.id === isEditing);
+                if (businessIndex !== -1) {
+                    listings[businessIndex] = businessData;
+                }
+                
+                showToast('🎉 Business updated successfully!', 'success');
+            } else {
+                // Create new business
+                businessData = {
+                    id: generateId(),
+                    name: formData.get('businessName'),
+                    category: formData.get('category'),
+                    type: formData.get('type'),
+                    description: formData.get('description'),
+                    contactMethod: formData.get('contactMethod'),
+                    contactInfo: formData.get('contactInfo'),
+                    instagram: formData.get('instagram') || null,
+                    location: formData.get('location') || null,
+                    tags: tags,
+                    image: document.getElementById('imagePreview').querySelector('img')?.src || null,
+                    rating: 0,
+                    reviewCount: 0,
+                    status: 'available',
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Add to listings
+                listings.unshift(businessData);
+                
+                showToast('🎉 Business posted successfully! Redirecting to home...', 'success');
+                
+                // Navigate to home page after delay for new businesses
+                setTimeout(() => {
+                    if (isBusinessesPage) {
+                        window.location.href = 'index.html';
+                    }
+                }, 2000);
+            }
+            
             saveListings();
             
             // Update display
@@ -615,19 +688,16 @@ function handleFormSubmit(e) {
             // Clear form
             elements.submitForm.reset();
             clearFormPreview();
+            delete elements.submitForm.dataset.editingId;
+            
+            // Reset submit button text
+            const submitBtn = elements.submitForm.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.textContent = 'Submit Business';
+            }
             
             // Close modal
             closeSubmitModal();
-            
-            // Show success message
-            showToast('🎉 Business posted successfully! Redirecting to home...', 'success');
-            
-            // Navigate to home page after delay
-            setTimeout(() => {
-                if (isBusinessesPage) {
-                    window.location.href = 'index.html';
-                }
-            }, 2000);
             
         } catch (error) {
             console.error('Error submitting business:', error);
@@ -667,8 +737,36 @@ function clearFormPreview() {
  */
 function isUserCreatedBusiness(listing) {
     // Sample businesses have specific IDs, user-created ones have generated IDs
-    const sampleBusinessIds = ['mosi-mini-shop', 'njeris-salon', 'tech-tutor-mike'];
+    const sampleBusinessIds = ['mosi-mini-shop', 'njeris-salon', 'kips-bites'];
     return !sampleBusinessIds.includes(listing.id);
+}
+
+/**
+ * Generate star rating HTML
+ */
+function generateStarRating(rating) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    
+    let stars = '';
+    
+    // Full stars
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<svg class="star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    }
+    
+    // Half star
+    if (hasHalfStar) {
+        stars += '<svg class="star" viewBox="0 0 24 24"><defs><linearGradient id="half"><stop offset="50%" stop-color="#ffc107"/><stop offset="50%" stop-color="#e9ecef"/></linearGradient></defs><path fill="url(#half)" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    }
+    
+    // Empty stars
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<svg class="star empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    }
+    
+    return stars;
 }
 
 /**
@@ -702,6 +800,49 @@ function deleteBusiness(businessId) {
     
     // Show success message
     showToast('Business deleted successfully', 'success');
+}
+
+/**
+ * Edit a business listing
+ */
+function editBusiness(businessId) {
+    const business = listings.find(listing => listing.id === businessId);
+    if (!business) {
+        showToast('Business not found', 'error');
+        return;
+    }
+    
+    // Open the submit modal
+    openSubmitModal();
+    
+    // Populate the form with existing data
+    setTimeout(() => {
+        const form = elements.submitForm;
+        if (form) {
+            form.businessName.value = business.name || '';
+            form.category.value = business.category || '';
+            form.type.value = business.type || '';
+            form.description.value = business.description || '';
+            form.contactMethod.value = business.contactMethod || '';
+            form.contactInfo.value = business.contactInfo || '';
+            form.instagram.value = business.instagram || '';
+            form.location.value = business.location || '';
+            
+            // Set tags
+            if (business.tags && business.tags.length > 0) {
+                form.tags.value = business.tags[0] || '';
+            }
+            
+            // Store the business ID for updating
+            form.dataset.editingId = businessId;
+            
+            // Change submit button text
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.textContent = 'Update Business';
+            }
+        }
+    }, 100);
 }
 
 /**
