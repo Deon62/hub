@@ -2287,7 +2287,7 @@ textarea:focus {
 
 /* Statistics Section */
 .statistics {
-    padding: var(--space-6) 0;
+    padding: var(--space-4) 0;
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: var(--white);
     position: relative;
@@ -2308,7 +2308,7 @@ textarea:focus {
 
 .statistics-header {
     text-align: center;
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-3);
     position: relative;
     z-index: 1;
 }
@@ -2387,18 +2387,6 @@ textarea:focus {
     letter-spacing: 0.5px;
 }
 
-.statistics-footer {
-    text-align: center;
-    margin-top: var(--space-4);
-    position: relative;
-    z-index: 1;
-}
-
-.statistics-footer p {
-    font-size: var(--font-size-lg);
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 500;
-}
 
 /* Mobile Responsive for Statistics */
 @media (max-width: 768px) {
@@ -2436,10 +2424,6 @@ textarea:focus {
     
     .stat-label {
         font-size: var(--font-size-xs);
-    }
-    
-    .statistics-footer p {
-        font-size: var(--font-size-sm);
     }
 }
 
