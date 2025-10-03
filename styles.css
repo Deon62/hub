@@ -1951,3 +1951,248 @@ textarea:focus {
         font-size: var(--font-size-sm);
     }
 }
+
+/* Pricing Page Styles */
+.pricing-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    padding: var(--space-20) 0 var(--space-16) 0;
+    text-align: center;
+    color: var(--white);
+}
+
+.pricing-hero-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.pricing-title {
+    font-size: var(--font-size-4xl);
+    font-weight: 700;
+    margin-bottom: var(--space-4);
+    color: var(--white);
+}
+
+.pricing-subtitle {
+    font-size: var(--font-size-lg);
+    opacity: 0.9;
+    line-height: 1.6;
+    color: var(--white);
+}
+
+.pricing-section {
+    padding: var(--space-20) 0;
+    background-color: var(--bg);
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-4);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.pricing-card {
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.pricing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.pricing-card-featured {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: var(--white);
+    border-color: var(--primary);
+    transform: scale(1.05);
+}
+
+.pricing-card-featured:hover {
+    transform: scale(1.05) translateY(-4px);
+}
+
+.featured-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ff6b35;
+    color: var(--white);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pricing-header {
+    text-align: center;
+    margin-bottom: var(--space-4);
+}
+
+.plan-name {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    margin-bottom: var(--space-4);
+    color: inherit;
+}
+
+.plan-price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-1);
+    margin-bottom: var(--space-3);
+}
+
+.currency {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: inherit;
+}
+
+.amount {
+    font-size: var(--font-size-4xl);
+    font-weight: 700;
+    color: inherit;
+}
+
+.period {
+    font-size: var(--font-size-base);
+    color: inherit;
+    opacity: 0.8;
+}
+
+.plan-description {
+    font-size: var(--font-size-base);
+    opacity: 0.8;
+    color: inherit;
+}
+
+.pricing-features {
+    margin-bottom: var(--space-4);
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+    font-size: var(--font-size-sm);
+    color: inherit;
+}
+
+.feature-icon {
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.pricing-card-featured .feature-icon {
+    color: var(--white);
+}
+
+.pricing-footer {
+    text-align: center;
+}
+
+.pricing-btn {
+    width: 100%;
+    padding: var(--space-4) var(--space-6);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+}
+
+.pricing-card-featured .pricing-btn {
+    background-color: var(--white);
+    color: var(--primary);
+    border: 2px solid var(--white);
+}
+
+.pricing-card-featured .pricing-btn:hover {
+    background-color: transparent;
+    color: var(--white);
+    border-color: var(--white);
+}
+
+.pricing-faq {
+    padding: var(--space-20) 0;
+    background-color: var(--white);
+}
+
+.faq-title {
+    text-align: center;
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    margin-bottom: var(--space-12);
+    color: var(--text);
+}
+
+/* FAQ section now uses the same styles as program cards */
+
+/* Mobile Responsive for Pricing */
+@media (max-width: 768px) {
+    .pricing-hero {
+        padding: var(--space-16) 0 var(--space-12) 0;
+    }
+    
+    .pricing-title {
+        font-size: var(--font-size-3xl);
+    }
+    
+    .pricing-subtitle {
+        font-size: var(--font-size-base);
+    }
+    
+    .pricing-section {
+        padding: var(--space-16) 0;
+    }
+    
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+        padding: 0 var(--space-4);
+    }
+    
+    .pricing-card {
+        padding: var(--space-6);
+    }
+    
+    .pricing-card-featured {
+        transform: none;
+    }
+    
+    .pricing-card-featured:hover {
+        transform: translateY(-4px);
+    }
+    
+    .plan-price {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .amount {
+        font-size: var(--font-size-3xl);
+    }
+    
+    .pricing-faq {
+        padding: var(--space-16) 0;
+    }
+    
+    /* FAQ section uses program card mobile styles */
+}

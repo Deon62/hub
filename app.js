@@ -135,7 +135,9 @@ function saveListings() {
  */
 function setupEventListeners() {
     // Search functionality
-    elements.searchInput.addEventListener('input', handleSearch);
+    if (elements.searchInput) {
+        elements.searchInput.addEventListener('input', handleSearch);
+    }
     
     // Category filters
     document.querySelectorAll('.filter-chip').forEach(chip => {
@@ -175,6 +177,8 @@ function setupEventListeners() {
     
     // Program card toggle functionality
     setupProgramCards();
+    
+    // FAQ cards now use the same functionality as program cards
     
     // Tag dropdown functionality
     const tagsSelect = document.getElementById('tags');
@@ -510,8 +514,10 @@ function openProfileModal(listingId) {
         }
     `;
     
-    elements.profileModal.setAttribute('aria-hidden', 'false');
-    elements.profileModal.classList.add('show');
+    if (elements.profileModal) {
+        elements.profileModal.setAttribute('aria-hidden', 'false');
+        elements.profileModal.classList.add('show');
+    }
     document.body.style.overflow = 'hidden';
     
     // Focus the close button for accessibility
@@ -525,13 +531,15 @@ function openProfileModal(listingId) {
  * Close profile modal
  */
 function closeProfileModal() {
-    elements.profileModal.setAttribute('aria-hidden', 'true');
-    elements.profileModal.classList.remove('show');
+    if (elements.profileModal) {
+        elements.profileModal.setAttribute('aria-hidden', 'true');
+        elements.profileModal.classList.remove('show');
+    }
     document.body.style.overflow = '';
     
     // Remove focus from any focused element inside the modal
     const focusedElement = document.activeElement;
-    if (focusedElement && elements.profileModal.contains(focusedElement)) {
+    if (focusedElement && elements.profileModal && elements.profileModal.contains(focusedElement)) {
         focusedElement.blur();
     }
 }
@@ -540,8 +548,10 @@ function closeProfileModal() {
  * Open submit modal
  */
 function openSubmitModal() {
-    elements.submitModal.setAttribute('aria-hidden', 'false');
-    elements.submitModal.classList.add('show');
+    if (elements.submitModal) {
+        elements.submitModal.setAttribute('aria-hidden', 'false');
+        elements.submitModal.classList.add('show');
+    }
     document.body.style.overflow = 'hidden';
     
     // Focus the close button for accessibility
@@ -571,13 +581,15 @@ function openSubmitModal() {
  * Close submit modal
  */
 function closeSubmitModal() {
-    elements.submitModal.setAttribute('aria-hidden', 'true');
-    elements.submitModal.classList.remove('show');
+    if (elements.submitModal) {
+        elements.submitModal.setAttribute('aria-hidden', 'true');
+        elements.submitModal.classList.remove('show');
+    }
     document.body.style.overflow = '';
     
     // Remove focus from any focused element inside the modal
     const focusedElement = document.activeElement;
-    if (focusedElement && elements.submitModal.contains(focusedElement)) {
+    if (focusedElement && elements.submitModal && elements.submitModal.contains(focusedElement)) {
         focusedElement.blur();
     }
 }
@@ -1063,8 +1075,10 @@ function toggleMobileMenu() {
     const hamburger = document.getElementById('hamburgerBtn');
     const mobileMenu = document.getElementById('mobileMenu');
     
-    hamburger.classList.toggle('active');
-    mobileMenu.classList.toggle('open');
+    if (hamburger && mobileMenu) {
+        hamburger.classList.toggle('active');
+        mobileMenu.classList.toggle('open');
+    }
     
     // Prevent body scroll when menu is open
     if (mobileMenu.classList.contains('open')) {
@@ -1081,8 +1095,10 @@ function closeMobileMenu() {
     const hamburger = document.getElementById('hamburgerBtn');
     const mobileMenu = document.getElementById('mobileMenu');
     
-    hamburger.classList.remove('active');
-    mobileMenu.classList.remove('open');
+    if (hamburger && mobileMenu) {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('open');
+    }
     document.body.style.overflow = '';
 }
 
@@ -1092,11 +1108,11 @@ function closeMobileMenu() {
 function handleKeyboardNavigation(e) {
     // Close modals with Escape key
     if (e.key === 'Escape') {
-        if (elements.profileModal.classList.contains('show')) {
+        if (elements.profileModal && elements.profileModal.classList.contains('show')) {
             closeProfileModal();
-        } else if (elements.submitModal.classList.contains('show')) {
+        } else if (elements.submitModal && elements.submitModal.classList.contains('show')) {
             closeSubmitModal();
-        } else if (document.getElementById('mobileMenu').classList.contains('open')) {
+        } else if (document.getElementById('mobileMenu') && document.getElementById('mobileMenu').classList.contains('open')) {
             closeMobileMenu();
         }
     }
@@ -1119,7 +1135,9 @@ function showToast(message, type = 'success') {
         <button class="toast-close" onclick="this.parentElement.remove()">×</button>
     `;
     
-    elements.toastContainer.appendChild(toast);
+    if (elements.toastContainer) {
+        elements.toastContainer.appendChild(toast);
+    }
     
     // Trigger animation
     setTimeout(() => toast.classList.add('show'), 100);
@@ -1167,13 +1185,18 @@ function handleTagChange() {
 /**
  * Setup program cards toggle functionality
  */
-function setupProgramCards() {
+function setupProgramCards(retryCount = 0) {
     const programCards = document.querySelectorAll('.program-card');
     console.log('Found program cards:', programCards.length); // Debug log
     
-    if (programCards.length === 0) {
+    if (programCards.length === 0 && retryCount < 5) {
         console.log('No program cards found, retrying in 100ms...');
-        setTimeout(setupProgramCards, 100);
+        setTimeout(() => setupProgramCards(retryCount + 1), 100);
+        return;
+    }
+    
+    if (programCards.length === 0) {
+        console.log('No program cards found after 5 retries, giving up.');
         return;
     }
     
@@ -1204,6 +1227,8 @@ function setupProgramCards() {
         });
     });
 }
+
+// FAQ cards now use the same functionality as program cards (setupProgramCards function)
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
