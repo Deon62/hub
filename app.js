@@ -16,18 +16,9 @@ let currentFilters = {
 const isHomePage = window.location.pathname === '/' || window.location.pathname.endsWith('index.html');
 const isBusinessesPage = window.location.pathname.endsWith('businesses.html');
 
-// DOM Elements
-const elements = {
-    businessGrid: document.getElementById('businessGrid') || document.getElementById('featuredBusinessGrid'),
-    searchInput: document.getElementById('searchInput'),
-    resultsCount: document.getElementById('resultsCount'),
-    emptyState: document.getElementById('emptyState'),
-    profileModal: document.getElementById('profileModal'),
-    submitModal: document.getElementById('submitModal'),
-    submitForm: document.getElementById('submitForm'),
-    exportBtn: document.getElementById('exportBtn'),
-    toastContainer: document.getElementById('toastContainer')
-};
+// DOM Elements - will be initialized in init function
+let elements = {};
+
 
 // Sample Data - 3 businesses as specified
 const sampleListings = [
@@ -79,6 +70,24 @@ const sampleListings = [
  * Initialize the application
  */
 function init() {
+    // Initialize DOM elements
+    elements = {
+        businessGrid: document.getElementById('businessGrid') || document.getElementById('featuredBusinessGrid'),
+        searchInput: document.getElementById('searchInput'),
+        resultsCount: document.getElementById('resultsCount'),
+        emptyState: document.getElementById('emptyState'),
+        profileModal: document.getElementById('profileModal'),
+        submitModal: document.getElementById('submitModal'),
+        submitForm: document.getElementById('submitForm'),
+        exportBtn: document.getElementById('exportBtn'),
+        toastContainer: document.getElementById('toastContainer')
+    };
+    
+    console.log('Initialized elements:', elements);
+    console.log('Business Grid Element:', elements.businessGrid);
+    console.log('Is Home Page:', isHomePage);
+    console.log('Is Businesses Page:', isBusinessesPage);
+    
     loadListings();
     setupEventListeners();
     renderListings();
@@ -292,28 +301,41 @@ function filterListings() {
  * Render listings to the grid
  */
 function renderListings() {
+    console.log('renderListings called');
+    console.log('filteredListings length:', filteredListings.length);
+    console.log('businessGrid element:', elements.businessGrid);
+    
     // Determine which listings to show based on the page
     let listingsToShow = filteredListings;
     
     if (isHomePage) {
         // Show only first 3 businesses as featured on home page
         listingsToShow = filteredListings.slice(0, 3);
+        console.log('Home page - showing first 3:', listingsToShow.length);
     }
     
     if (listingsToShow.length === 0) {
-        elements.businessGrid.style.display = 'none';
+        console.log('No listings to show');
+        if (elements.businessGrid) {
+            elements.businessGrid.style.display = 'none';
+        }
         if (elements.emptyState) {
             elements.emptyState.style.display = 'block';
         }
         return;
     }
     
-    elements.businessGrid.style.display = 'grid';
+    if (elements.businessGrid) {
+        elements.businessGrid.style.display = 'grid';
+        elements.businessGrid.innerHTML = listingsToShow.map(listing => createBusinessCard(listing)).join('');
+        console.log('Rendered', listingsToShow.length, 'businesses');
+    } else {
+        console.error('businessGrid element not found!');
+    }
+    
     if (elements.emptyState) {
         elements.emptyState.style.display = 'none';
     }
-    
-    elements.businessGrid.innerHTML = listingsToShow.map(listing => createBusinessCard(listing)).join('');
     
     // Add event listeners to new cards
     document.querySelectorAll('.btn-profile').forEach(btn => {
