@@ -548,10 +548,14 @@ function closeProfileModal() {
  * Open submit modal
  */
 function openSubmitModal() {
-    if (elements.submitModal) {
-        elements.submitModal.setAttribute('aria-hidden', 'false');
-        elements.submitModal.classList.add('show');
+    // Check if submit modal exists (not all pages have it)
+    if (!elements.submitModal) {
+        console.log('Submit modal not found on this page');
+        return;
     }
+    
+    elements.submitModal.setAttribute('aria-hidden', 'false');
+    elements.submitModal.classList.add('show');
     document.body.style.overflow = 'hidden';
     
     // Focus the close button for accessibility
@@ -560,35 +564,37 @@ function openSubmitModal() {
         if (closeBtn) closeBtn.focus();
     }, 100);
     
-    // Reset form
-    elements.submitForm.reset();
-    clearFormErrors();
-    
-    // Clear tag list if it exists
-    const tagList = document.getElementById('tagList');
-    if (tagList) {
-        tagList.innerHTML = '';
-    }
-    
-    // Clear image preview if it exists
-    const imagePreview = document.getElementById('imagePreview');
-    if (imagePreview) {
-        imagePreview.innerHTML = '';
-    }
-    
-    // Clear custom tag input if it exists
-    const otherTagInput = document.getElementById('otherTagInput');
-    if (otherTagInput) {
-        otherTagInput.style.display = 'none';
-    }
-    
-    // Reset submit button to default state
-    const submitBtn = elements.submitForm.querySelector('button[type="submit"]');
-    if (submitBtn) {
-        submitBtn.textContent = 'Post Your Business';
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
-        submitBtn.style.cursor = 'pointer';
+    // Reset form if it exists
+    if (elements.submitForm) {
+        elements.submitForm.reset();
+        clearFormErrors();
+        
+        // Clear tag list if it exists
+        const tagList = document.getElementById('tagList');
+        if (tagList) {
+            tagList.innerHTML = '';
+        }
+        
+        // Clear image preview if it exists
+        const imagePreview = document.getElementById('imagePreview');
+        if (imagePreview) {
+            imagePreview.innerHTML = '';
+        }
+        
+        // Clear custom tag input if it exists
+        const otherTagInput = document.getElementById('otherTagInput');
+        if (otherTagInput) {
+            otherTagInput.style.display = 'none';
+        }
+        
+        // Reset submit button to default state
+        const submitBtn = elements.submitForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.textContent = 'Post Your Business';
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+        }
     }
 }
 
