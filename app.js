@@ -575,6 +575,21 @@ function openSubmitModal() {
     if (imagePreview) {
         imagePreview.innerHTML = '';
     }
+    
+    // Clear custom tag input if it exists
+    const otherTagInput = document.getElementById('otherTagInput');
+    if (otherTagInput) {
+        otherTagInput.style.display = 'none';
+    }
+    
+    // Reset submit button to default state
+    const submitBtn = elements.submitForm.querySelector('button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.textContent = 'Post Your Business';
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+    }
 }
 
 /**
