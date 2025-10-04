@@ -3009,14 +3009,14 @@ textarea:focus {
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
-    max-height: 70vh;
+    max-height: 60vh;
 }
 
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-3);
+    padding: var(--space-2);
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: var(--white);
 }
@@ -3038,20 +3038,20 @@ textarea:focus {
 .dashboard-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-1);
-    padding: var(--space-2);
+    gap: 2px;
+    padding: var(--space-1);
     background-color: var(--bg);
 }
 
 .stat-card {
     background-color: var(--white);
     border-radius: var(--radius-md);
-    padding: var(--space-2);
+    padding: var(--space-1);
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border);
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-1);
     transition: transform 0.2s ease;
 }
 
@@ -3311,27 +3311,27 @@ textarea:focus {
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
-    max-height: 70vh;
+    max-height: 60vh;
 }
 
 .profile-header {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-3);
+    gap: var(--space-1);
+    padding: var(--space-2);
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: var(--white);
 }
 
 .profile-avatar {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .profile-avatar svg {
@@ -3371,17 +3371,17 @@ textarea:focus {
 .profile-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-1);
-    padding: var(--space-2);
+    gap: 2px;
+    padding: var(--space-1);
     background-color: var(--bg);
 }
 
 .stat-item {
     display: flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: 2px;
     background-color: var(--white);
-    padding: var(--space-1);
+    padding: 2px;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border);
@@ -3591,16 +3591,18 @@ textarea:focus {
     margin: 0 auto;
     background: var(--white);
     box-shadow: var(--shadow-lg);
+    overflow: hidden;
 }
 
 /* Chat Header */
 .chat-header {
     background: var(--white);
     border-bottom: 1px solid var(--border);
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-1) var(--space-2);
     position: sticky;
     top: 0;
     z-index: 10;
+    flex-shrink: 0;
 }
 
 .chat-header-content {
@@ -3684,13 +3686,13 @@ textarea:focus {
 /* Chat Messages */
 .chat-messages {
     flex: 1;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-1) var(--space-2);
     overflow-y: auto;
     background: var(--bg);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    min-height: 120px;
+    min-height: 0;
 }
 
 .message {
@@ -3744,6 +3746,7 @@ textarea:focus {
     background: var(--white);
     border-top: 1px solid var(--border);
     padding: var(--space-1) var(--space-2);
+    flex-shrink: 0;
 }
 
 .chat-input-container {
