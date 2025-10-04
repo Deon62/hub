@@ -1,7 +1,3 @@
-/**
- * Student Hustle Hub - Main Application Logic
- * A client-side directory for student businesses and side hustles
- */
 
 // Application State
 let listings = [];
@@ -11,6 +7,12 @@ let currentFilters = {
     tags: [],
     search: ''
 };
+
+// Performance optimizations
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+let cache = new Map();
+let lastCacheTime = 0;
+let searchTimeout;
 
 // Check if we're on the home page or businesses page
 const isHomePage = window.location.pathname === '/' || window.location.pathname.endsWith('index.html');
@@ -138,11 +140,24 @@ function init() {
  * Load listings from localStorage or seed with sample data
  */
 function loadListings() {
+    const now = Date.now();
+    
+    // Check cache first
+    if (cache.has('listings') && (now - lastCacheTime) < CACHE_DURATION) {
+        listings = cache.get('listings');
+        filteredListings = [...listings];
+        return;
+    }
+    
     // Clear old data and force load new sample listings
     localStorage.removeItem('student_hustles');
     listings = [...sampleListings];
     saveListings();
     filteredListings = [...listings];
+    
+    // Cache the results
+    cache.set('listings', listings);
+    lastCacheTime = now;
 }
 
 /**
@@ -286,8 +301,14 @@ function setupEventListeners() {
  * Handle search input
  */
 function handleSearch(e) {
-    currentFilters.search = e.target.value.toLowerCase();
-    filterListings();
+    // Clear previous timeout
+    clearTimeout(searchTimeout);
+    
+    // Set new timeout for debounced search
+    searchTimeout = setTimeout(() => {
+        currentFilters.search = e.target.value.toLowerCase();
+        filterListings();
+    }, 300); // 300ms delay
 }
 
 /**
@@ -386,7 +407,20 @@ function renderListings() {
     
     if (elements.businessGrid) {
         elements.businessGrid.style.display = 'grid';
-        elements.businessGrid.innerHTML = listingsToShow.map(listing => createBusinessCard(listing)).join('');
+        
+        // Use DocumentFragment for better performance
+        const fragment = document.createDocumentFragment();
+        const tempDiv = document.createElement('div');
+        
+        // Batch DOM updates
+        requestAnimationFrame(() => {
+            tempDiv.innerHTML = listingsToShow.map(listing => createBusinessCard(listing)).join('');
+            while (tempDiv.firstChild) {
+                fragment.appendChild(tempDiv.firstChild);
+            }
+            elements.businessGrid.innerHTML = '';
+            elements.businessGrid.appendChild(fragment);
+        });
     }
     
     if (elements.emptyState) {
@@ -441,7 +475,7 @@ function createBusinessCard(listing) {
     return `
         <article class="business-card" data-id="${listing.id}">
             <div class="business-content">
-                <img src="${imageSrc}" alt="${listing.name}" class="business-image" loading="lazy">
+                <img src="${imageSrc}" alt="${listing.name}" class="business-image" loading="lazy" decoding="async" fetchpriority="low">
                 <div class="business-info">
                     <div class="business-header">
                         <h3 class="business-name">${escapeHtml(listing.name)}</h3>

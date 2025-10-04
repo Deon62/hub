@@ -6,6 +6,13 @@
     <title>Student Hustle Hub - Find & Share Student Businesses</title>
     <meta name="description" content="Discover and share student-run businesses, services, and side hustles on campus">
     <link rel="stylesheet" href="styles.css">
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preload" href="app.js" as="script">
+    <link rel="preload" href="profiles/deon.jpg" as="image">
+    <link rel="preload" href="profiles/deon1.jpg" as="image">
+    <link rel="preload" href="profiles/deon2.jpg" as="image">
+    <link rel="preload" href="profiles/deon3.jpg" as="image">
+    <link rel="preload" href="profiles/deon4.jpg" as="image">
 </head>
 <body>
     <!-- Header -->
@@ -693,6 +700,19 @@
 
     <script src="app.js"></script>
     <script>
+        // Register Service Worker for caching
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+        
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
