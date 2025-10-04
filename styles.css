@@ -2843,7 +2843,7 @@ textarea:focus {
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, var(--bg) 0%, #f8fafc 100%);
-    padding: var(--space-20) 0;
+    padding: var(--space-8) 0;
 }
 
 .coming-soon-content {
@@ -3538,10 +3538,9 @@ textarea:focus {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     overflow: hidden;
-    margin: var(--space-6) 0;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: var(--space-4) auto;
+    max-width: 500px;
+    width: 100%;
 }
 
 .messages-header {
@@ -3570,14 +3569,14 @@ textarea:focus {
 }
 
 .conversation-list {
-    max-height: 300px;
+    max-height: 200px;
     overflow-y: auto;
 }
 
 .conversation-item {
     display: flex;
     align-items: center;
-    padding: var(--space-4) var(--space-6);
+    padding: var(--space-3) var(--space-4);
     border-bottom: 1px solid var(--border);
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -3594,15 +3593,16 @@ textarea:focus {
 }
 
 .conversation-avatar {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: var(--bg);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: var(--space-4);
+    margin-right: var(--space-3);
     color: var(--muted);
+    flex-shrink: 0;
 }
 
 .conversation-info {
@@ -3651,7 +3651,7 @@ textarea:focus {
 }
 
 .chat-header {
-    padding: var(--space-4) var(--space-6);
+    padding: var(--space-3) var(--space-4);
     border-bottom: 1px solid var(--border);
     background: var(--bg);
 }
@@ -3686,13 +3686,13 @@ textarea:focus {
 }
 
 .chat-messages {
-    padding: var(--space-4) var(--space-6);
-    max-height: 300px;
-    overflow-y: auto;
+    padding: var(--space-3) var(--space-4);
+    max-height: 150px;
+    overflow: hidden;
 }
 
 .message {
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-2);
     display: flex;
     flex-direction: column;
 }
@@ -3706,11 +3706,12 @@ textarea:focus {
 }
 
 .message-content {
-    max-width: 70%;
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-lg);
-    font-size: var(--font-size-sm);
+    max-width: 60%;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
     line-height: 1.4;
+    word-wrap: break-word;
 }
 
 .message.sent .message-content {
@@ -3735,19 +3736,20 @@ textarea:focus {
 .message-input {
     display: flex;
     align-items: center;
-    padding: var(--space-4) var(--space-6);
+    padding: var(--space-3) var(--space-4);
     border-top: 1px solid var(--border);
     background: var(--bg);
 }
 
 .message-input input {
     flex: 1;
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    font-size: var(--font-size-sm);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-xs);
     background: var(--white);
-    margin-right: var(--space-3);
+    margin-right: var(--space-2);
+    min-width: 0;
 }
 
 .message-input input:focus {
@@ -3761,13 +3763,14 @@ textarea:focus {
     color: var(--white);
     border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    flex-shrink: 0;
 }
 
 .message-input button:hover {
@@ -3781,7 +3784,7 @@ textarea:focus {
 }
 
 .messages-footer {
-    padding: var(--space-4) var(--space-6);
+    padding: var(--space-2) var(--space-4);
     border-top: 1px solid var(--border);
     background: var(--bg);
     text-align: center;
