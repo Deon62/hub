@@ -192,8 +192,6 @@ function setupEventListeners() {
     // Testimonials scrolling functionality
     setupTestimonialsScrolling();
     
-    // Statistics counter animation
-    setupStatisticsCounters();
     
     // Tag dropdown functionality
     const tagsSelect = document.getElementById('tags');
@@ -1445,68 +1443,6 @@ function setupTestimonialsScrolling() {
     observer.observe(testimonialsTrack);
 }
 
-/**
- * Setup statistics counter animation
- */
-function setupStatisticsCounters() {
-    const statNumbers = document.querySelectorAll('.stat-number');
-    if (statNumbers.length === 0) return;
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const target = entry.target;
-                const finalValue = parseFloat(target.getAttribute('data-target'));
-                animateCounter(target, finalValue);
-                observer.unobserve(target); // Only animate once
-            }
-        });
-    }, {
-        threshold: 0.5 // Trigger when 50% of the element is visible
-    });
-    
-    statNumbers.forEach(stat => {
-        observer.observe(stat);
-    });
-}
-
-/**
- * Animate counter from 0 to target value
- */
-function animateCounter(element, target) {
-    const duration = 2000; // 2 seconds
-    const startTime = performance.now();
-    const startValue = 0;
-    
-    function updateCounter(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        // Easing function for smooth animation
-        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-        const currentValue = startValue + (target - startValue) * easeOutQuart;
-        
-        // Format the number based on whether it's a decimal or integer
-        if (target % 1 !== 0) {
-            element.textContent = currentValue.toFixed(1);
-        } else {
-            element.textContent = Math.floor(currentValue).toLocaleString();
-        }
-        
-        if (progress < 1) {
-            requestAnimationFrame(updateCounter);
-        } else {
-            // Ensure final value is exact
-            if (target % 1 !== 0) {
-                element.textContent = target.toFixed(1);
-            } else {
-                element.textContent = target.toLocaleString();
-            }
-        }
-    }
-    
-    requestAnimationFrame(updateCounter);
-}
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
