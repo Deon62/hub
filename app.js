@@ -21,56 +21,90 @@ const isBusinessProfilePage = window.location.pathname.endsWith('business-profil
 let elements = {};
 
 
-// Sample Data - 3 businesses as specified
+// Sample Data - 5 businesses for launch
 const sampleListings = [
     {
-        id: 'mosi-mini-shop',
-        name: "Mosi's Mini Shop",
-        category: 'goods',
-        type: 'goods',
-        description: 'Premium perfumes, accessories, and lifestyle products. Imported fragrances from top brands at student-friendly prices. Perfect for gifting or treating yourself!',
+        id: 'deon-tech-solutions',
+        name: "Deon's Tech Solutions",
+        category: 'tech',
+        type: 'service',
+        description: 'Professional web development, mobile app creation, and digital solutions for students and small businesses. Specializing in modern, responsive websites and custom software development.',
         contactMethod: 'whatsapp',
-        contactInfo: '+254712345678',
-        instagram: 'https://instagram.com/mosi_mini_shop',
-        location: 'Main Campus, Dorm 3',
-        tags: ['budget', 'delivery'],
-        image: null,
-        rating: 4.5,
-        reviewCount: 23,
+        contactInfo: '+254702248984',
+        instagram: 'https://instagram.com/deon_tech_solutions',
+        location: 'Remote & On-campus',
+        tags: ['budget', 'discount'],
+        image: 'profiles/deon.jpg',
+        rating: 4.9,
+        reviewCount: 32,
         status: 'available',
         createdAt: new Date().toISOString()
     },
     {
-        id: 'njeris-salon',
-        name: "Njeri's Salon",
-        category: 'beauty',
+        id: 'deon-graphics-design',
+        name: "Deon's Graphics & Design",
+        category: 'tech',
         type: 'service',
-        description: 'Professional hair styling, braiding, and beauty services. Experienced stylist specializing in natural hair care and trendy styles. Book your appointment today!',
+        description: 'Creative graphic design services including logos, posters, flyers, and social media content. Professional designs that make your brand stand out. Perfect for student organizations and events.',
+        contactMethod: 'email',
+        contactInfo: '625deon@gmail.com',
+        instagram: 'https://instagram.com/deon_graphics',
+        location: 'Remote & On-campus',
+        tags: ['budget', 'discount'],
+        image: 'profiles/deon1.jpg',
+        rating: 4.7,
+        reviewCount: 28,
+        status: 'available',
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'deon-tutoring-services',
+        name: "Deon's Tutoring Services",
+        category: 'education',
+        type: 'service',
+        description: 'Expert tutoring in mathematics, computer science, and programming. Personalized learning approach to help students excel in their studies. Available for one-on-one and group sessions.',
         contactMethod: 'phone',
-        contactInfo: '+254723456789',
-        instagram: 'https://instagram.com/njeris_salon',
-        location: 'Off-campus, 5 mins walk',
-        tags: ['discount'],
-        image: null,
+        contactInfo: '+254788256115',
+        instagram: 'https://instagram.com/deon_tutoring',
+        location: 'On-campus & Online',
+        tags: ['discount', 'budget'],
+        image: 'profiles/deon2.jpg',
         rating: 4.8,
-        reviewCount: 45,
+        reviewCount: 41,
         status: 'available',
         createdAt: new Date().toISOString()
     },
     {
-        id: 'kips-bites',
-        name: "Kip's Bites",
-        category: 'food',
+        id: 'deon-digital-marketing',
+        name: "Deon's Digital Marketing",
+        category: 'tech',
         type: 'service',
-        description: 'Homemade snacks, fresh juices, and campus delivery. Healthy, affordable meals made with love. Perfect for busy students who want quality food delivered right to their door.',
-        contactMethod: 'whatsapp',
-        contactInfo: '+254734567890',
-        instagram: 'https://instagram.com/kips_bites',
-        location: 'Campus delivery available',
-        tags: ['delivery', 'budget'],
-        image: null,
-        rating: 4.2,
-        reviewCount: 18,
+        description: 'Comprehensive digital marketing solutions including social media management, content creation, and online advertising. Help your business grow with strategic digital presence and engagement.',
+        contactMethod: 'email',
+        contactInfo: 'orinadeon@gmail.com',
+        instagram: 'https://instagram.com/deon_digital',
+        location: 'Remote & On-campus',
+        tags: ['budget', 'discount'],
+        image: 'profiles/deon3.jpg',
+        rating: 4.6,
+        reviewCount: 19,
+        status: 'available',
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'pinakle-consulting',
+        name: "Pinakle Consulting Services",
+        category: 'tech',
+        type: 'service',
+        description: 'Professional business consulting and project management services. Specializing in startup development, business strategy, and digital transformation. Helping students turn ideas into successful ventures.',
+        contactMethod: 'email',
+        contactInfo: 'pinakleorgltd@gmail.com',
+        instagram: 'https://instagram.com/pinakle_consulting',
+        location: 'Remote & On-campus',
+        tags: ['discount', 'budget'],
+        image: 'profiles/deon4.jpg',
+        rating: 4.9,
+        reviewCount: 35,
         status: 'available',
         createdAt: new Date().toISOString()
     }
@@ -104,18 +138,10 @@ function init() {
  * Load listings from localStorage or seed with sample data
  */
 function loadListings() {
-    const stored = localStorage.getItem('student_hustles');
-    if (stored) {
-        try {
-            listings = JSON.parse(stored);
-        } catch (error) {
-            console.error('Error parsing stored listings:', error);
-            listings = [...sampleListings];
-        }
-    } else {
-        listings = [...sampleListings];
-        saveListings();
-    }
+    // Clear old data and force load new sample listings
+    localStorage.removeItem('student_hustles');
+    listings = [...sampleListings];
+    saveListings();
     filteredListings = [...listings];
 }
 
@@ -788,7 +814,7 @@ function clearFormPreview() {
  */
 function isUserCreatedBusiness(listing) {
     // Sample businesses have specific IDs, user-created ones have generated IDs
-    const sampleBusinessIds = ['mosi-mini-shop', 'njeris-salon', 'kips-bites'];
+    const sampleBusinessIds = ['deon-tech-solutions', 'deon-graphics-design', 'deon-tutoring-services', 'deon-digital-marketing', 'pinakle-consulting'];
     return !sampleBusinessIds.includes(listing.id);
 }
 
