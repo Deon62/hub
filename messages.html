@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Ardena</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <!-- <img src="assets/logo.png" alt="Ardena" class="logo-img"> -->
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="businesses.html" class="nav-link">Browse</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-content">
+                <a href="profile.html" class="mobile-nav-link">Profile</a>
+                <a href="dashboard.html" class="mobile-nav-link">Dashboard</a>
+                <a href="messages.html" class="mobile-nav-link">Messages</a>
+                <a href="#about" class="mobile-nav-link">About</a>
+                <a href="pricing.html" class="mobile-nav-link">Pricing</a>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSc7wKPcZ4_bW_NqsG84ZCll5Aq01YG0mtEcKmvX_V66qwEVtQ/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="btn btn-primary mobile-post-btn">Submit for Listing</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Coming Soon Section -->
+    <section class="coming-soon-section">
+        <div class="container">
+            <div class="coming-soon-content">
+                <div class="coming-soon-icon">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1 class="coming-soon-title">Messages Coming Soon</h1>
+                <p class="coming-soon-description">
+                    Connect and communicate with other entrepreneurs seamlessly.
+                </p>
+                
+                <!-- Mock Messages Preview -->
+                <div class="mock-messages">
+                    <div class="messages-header">
+                        <h3>Recent Conversations</h3>
+                        <div class="messages-count">3 unread</div>
+                    </div>
+                    
+                    <div class="conversation-list">
+                        <div class="conversation-item active">
+                            <div class="conversation-avatar">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">Sarah Kimani</div>
+                                <div class="conversation-preview">Hey! I'm interested in your graphic design services...</div>
+                                <div class="conversation-time">2 min ago</div>
+                            </div>
+                            <div class="unread-badge">2</div>
+                        </div>
+                        
+                        <div class="conversation-item">
+                            <div class="conversation-avatar">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">Mike Ochieng</div>
+                                <div class="conversation-preview">Thanks for the tutoring session yesterday!</div>
+                                <div class="conversation-time">1 hour ago</div>
+                            </div>
+                        </div>
+                        
+                        <div class="conversation-item">
+                            <div class="conversation-avatar">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">Grace Wanjiku</div>
+                                <div class="conversation-preview">Can we schedule a photography session?</div>
+                                <div class="conversation-time">3 hours ago</div>
+                            </div>
+                            <div class="unread-badge">1</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mock Chat Window -->
+                    <div class="mock-chat">
+                        <div class="chat-header">
+                            <div class="chat-user">
+                                <div class="chat-avatar">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <div class="chat-user-info">
+                                    <div class="chat-user-name">Sarah Kimani</div>
+                                    <div class="chat-user-status">Online</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-messages">
+                            <div class="message received">
+                                <div class="message-content">Hey! I'm interested in your graphic design services for my startup. Do you have a portfolio I can check out?</div>
+                                <div class="message-time">2:30 PM</div>
+                            </div>
+                            
+                            <div class="message sent">
+                                <div class="message-content">Hi Sarah! Yes, I'd be happy to help. I can send you some samples of my recent work. What type of design are you looking for?</div>
+                                <div class="message-time">2:32 PM</div>
+                            </div>
+                            
+                            <div class="message received">
+                                <div class="message-content">I need a logo and some marketing materials. My budget is around KSH 15,000. Is that within your range?</div>
+                                <div class="message-time">2:35 PM</div>
+                            </div>
+                            
+                            <div class="message-input">
+                                <input type="text" placeholder="Type your message..." disabled>
+                                <button disabled>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <polygon points="22,2 15,22 11,13 2,9 22,2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="messages-footer">
+                        <div class="coming-soon-badge">
+                            <span>Full Messaging System Coming Soon!</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="coming-soon-actions">
+                    <a href="index.html" class="btn btn-primary">Back to Home</a>
+                    <a href="businesses.html" class="btn btn-secondary">Browse Businesses</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="social-links">
+                <a href="https://x.com/pinakle_org" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Follow us on X">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+                <a href="https://t.me/Deon_chinese" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Join our Telegram">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                </a>
+                <a href="mailto:pinakleorgltd@gmail.com" class="social-link" aria-label="Email us">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                </a>
+                <a href="https://instagram.com/deon_lii" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Follow us on Instagram">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Pinakle Org. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
