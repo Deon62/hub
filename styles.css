@@ -531,11 +531,19 @@ a:hover {
 .section-header {
     text-align: center;
     margin-bottom: var(--space-12);
+    display: block;
 }
 
 .section-header h2 {
-    color: var(--text);
+    display: block;
+    width: 100%;
     margin-bottom: var(--space-4);
+    color: var(--text);
+}
+
+.section-header p {
+    display: block;
+    width: 100%;
 }
 
 .section-header p {
@@ -2051,24 +2059,32 @@ textarea:focus {
 .pricing-section {
     padding: var(--space-16) 0;
     background-color: var(--bg);
+    overflow-x: hidden;
 }
 
 .pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-4);
     max-width: 900px;
     margin: 0 auto;
+    justify-content: center;
+    overflow-x: hidden;
 }
 
 .pricing-card {
     background-color: var(--white);
     border-radius: var(--radius-lg);
-    padding: var(--space-3);
+    padding: var(--space-4);
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
     border: 2px solid transparent;
     position: relative;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    flex: 0 0 auto;
 }
 
 .pricing-card:hover {
@@ -2148,6 +2164,7 @@ textarea:focus {
 
 .pricing-features {
     margin-bottom: var(--space-4);
+    flex: 1;
 }
 
 .features-list {
@@ -2160,9 +2177,19 @@ textarea:focus {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-2) 0;
+    padding: var(--space-1) 0;
     font-size: var(--font-size-sm);
-    color: inherit;
+    color: var(--text);
+    background: none;
+    border: none;
+    margin: 0;
+}
+
+.feature-item svg {
+    flex-shrink: 0;
+    color: #10b981;
+    width: 20px;
+    height: 20px;
 }
 
 .feature-icon {
@@ -2475,6 +2502,7 @@ textarea:focus {
         grid-template-columns: repeat(4, 1fr);
         gap: var(--space-1);
         max-width: 100%;
+        padding: 0 var(--space-2);
     }
     
     .stat-item {
@@ -2502,6 +2530,7 @@ textarea:focus {
         grid-template-columns: repeat(4, 1fr);
         gap: var(--space-1);
         max-width: 100%;
+        padding: 0 var(--space-1);
     }
     
     .stat-item {
@@ -2850,12 +2879,16 @@ textarea:focus {
     }
     
     .pricing-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-6);
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-4);
         padding: 0 var(--space-4);
     }
     
     .pricing-card {
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto;
         padding: var(--space-4);
     }
     
@@ -2986,7 +3019,9 @@ textarea:focus {
     }
     
     .feature-item {
-        padding: var(--space-2);
+        padding: var(--space-1) 0;
+        background: none;
+        border: none;
     }
     
     .feature-icon {
