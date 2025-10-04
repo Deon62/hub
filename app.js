@@ -247,8 +247,20 @@ function setupEventListeners() {
     // Hamburger menu
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const mobilePostBtn = document.getElementById('mobilePostBtn');
+    const desktopSidebar = document.getElementById('desktopSidebar');
+    const desktopSidebarClose = document.getElementById('desktopSidebarClose');
     
-    if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMobileMenu);
+    if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', () => {
+            // Check if we're on mobile or desktop
+            if (window.innerWidth <= 768) {
+                toggleMobileMenu();
+            } else {
+                toggleDesktopSidebar();
+            }
+        });
+    }
+    if (desktopSidebarClose) desktopSidebarClose.addEventListener('click', closeDesktopSidebar);
     if (mobilePostBtn) {
         mobilePostBtn.addEventListener('click', () => {
             openSubmitModal();
@@ -259,6 +271,11 @@ function setupEventListeners() {
     // Close mobile menu when clicking on links
     document.querySelectorAll('.mobile-nav-link').forEach(link => {
         link.addEventListener('click', closeMobileMenu);
+    });
+    
+    // Close desktop sidebar when clicking on links
+    document.querySelectorAll('.desktop-sidebar-nav .nav-link').forEach(link => {
+        link.addEventListener('click', closeDesktopSidebar);
     });
     
     // Keyboard navigation
@@ -1131,6 +1148,40 @@ function updateResultsCount() {
         const text = count === 1 ? '1 listing found' : `${count} listings found`;
         elements.resultsCount.textContent = text;
     }
+}
+
+/**
+ * Toggle desktop sidebar
+ */
+function toggleDesktopSidebar() {
+    const desktopSidebar = document.getElementById('desktopSidebar');
+    const hamburger = document.getElementById('hamburgerBtn');
+    
+    if (desktopSidebar && hamburger) {
+        desktopSidebar.classList.toggle('open');
+        hamburger.classList.toggle('active');
+    }
+    
+    // Prevent body scroll when sidebar is open
+    if (desktopSidebar.classList.contains('open')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+}
+
+/**
+ * Close desktop sidebar
+ */
+function closeDesktopSidebar() {
+    const desktopSidebar = document.getElementById('desktopSidebar');
+    const hamburger = document.getElementById('hamburgerBtn');
+    
+    if (desktopSidebar && hamburger) {
+        desktopSidebar.classList.remove('open');
+        hamburger.classList.remove('active');
+    }
+    document.body.style.overflow = '';
 }
 
 /**

@@ -240,6 +240,7 @@ a:hover {
     align-items: center;
     justify-content: space-between;
     height: 64px;
+    position: relative;
 }
 
 /* Logo Styles */
@@ -265,6 +266,17 @@ a:hover {
     display: flex;
     align-items: center;
     gap: var(--space-6);
+}
+
+/* Hide desktop nav links on larger screens - use sidebar instead */
+@media (min-width: 769px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .nav-container .btn {
+        display: none;
+    }
 }
 
 .nav-link {
@@ -304,7 +316,7 @@ a:hover {
 
 /* Hamburger Menu - Mobile Only */
 .hamburger {
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -355,6 +367,123 @@ a:hover {
 }
 
 /* Mobile Menu */
+/* Desktop Sidebar Navigation */
+.desktop-sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    background: var(--white);
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+}
+
+.desktop-sidebar.open {
+    left: 0;
+}
+
+.desktop-sidebar-header {
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.desktop-sidebar-logo {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.desktop-sidebar-close {
+    background: none;
+    border: none;
+    font-size: var(--font-size-xl);
+    color: var(--muted);
+    cursor: pointer;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+}
+
+.desktop-sidebar-close:hover {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.desktop-sidebar-nav {
+    padding: var(--space-4);
+}
+
+.desktop-sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-2);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.desktop-sidebar-nav .nav-link:hover {
+    background: var(--bg);
+    color: var(--primary);
+}
+
+.desktop-sidebar-nav .nav-link.active {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.desktop-sidebar-nav .coming-soon-link {
+    opacity: 0.7;
+}
+
+.desktop-sidebar-nav .coming-soon-badge {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: auto;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    line-height: 1.2;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.desktop-sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-4);
+    border-top: 1px solid var(--border);
+    background: var(--white);
+}
+
+.desktop-sidebar-footer .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Show desktop sidebar only on larger screens */
+@media (max-width: 768px) {
+    .desktop-sidebar {
+        display: none;
+    }
+}
+
 .mobile-menu {
     position: fixed;
     top: 64px;
