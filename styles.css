@@ -3886,10 +3886,11 @@ textarea:focus {
     }
     
     .coming-soon-link .coming-soon-badge {
-        font-size: 0.5rem;
-        padding: 1px 3px;
-        border-radius: 4px;
+        font-size: 0.4rem;
+        padding: 1px 2px;
+        border-radius: 3px;
         font-weight: 400;
-        letter-spacing: 0.2px;
+        letter-spacing: 0.1px;
+        line-height: 1;
     }
 }
