@@ -43,7 +43,7 @@ const sampleListings = [
     {
         id: 'deon-graphics-design',
         name: "BlueMoon",
-        category: 'tech',
+        category: 'Space',
         type: 'service',
         description: 'Bluemoon is focused on developing Rockets for space exploration and sells parts for them.',
         contactMethod: 'email',
@@ -60,7 +60,7 @@ const sampleListings = [
     {
         id: 'deon-tutoring-services',
         name: "Bigtee T-shirts ",
-        category: 'education',
+        category: 'Fashion',
         type: 'service',
         description: 'Expert in making T-shirts for any occasions, get custom designs made for you.',
         contactMethod: 'phone',
@@ -77,7 +77,7 @@ const sampleListings = [
     {
         id: 'deon-digital-marketing',
         name: "BMW's Digital Marketing",
-        category: 'tech',
+        category: 'services',
         type: 'service',
         description: 'BMW is a student-run business that sells BMW parts and accessories.we believe in the power of community and we are committed to providing the best products and services to our customers.',
         contactMethod: 'email',
