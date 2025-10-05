@@ -1,15 +1,15 @@
 // Service Worker for Student Hustle Hub - Enhanced PWA Support
-const CACHE_NAME = 'student-hustle-hub-v6';
-const STATIC_CACHE = 'static-cache-v6';
-const DYNAMIC_CACHE = 'dynamic-cache-v6';
+const CACHE_NAME = 'student-hustle-hub-v7';
+const STATIC_CACHE = 'static-cache-v7';
+const DYNAMIC_CACHE = 'dynamic-cache-v7';
 const UPDATE_CHECK_INTERVAL = 5 * 60 * 1000; // Check for updates every 5 minutes
 
 // Essential assets to cache immediately
 const urlsToCache = [
     '/',
     '/index.html',
-    '/styles.css?v=6',
-    '/app.js?v=6',
+    '/styles.css?v=7',
+    '/app.js?v=7',
     '/manifest.json',
     '/version.json',
     '/offline.html',
@@ -72,7 +72,7 @@ self.addEventListener('activate', event => {
                 clients.forEach(client => {
                     client.postMessage({
                         type: 'SW_READY',
-                        payload: { version: 'v6' }
+                        payload: { version: 'v7' }
                     });
                 });
             });
