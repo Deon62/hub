@@ -2552,12 +2552,185 @@ function dismissUpdateNotification() {
     localStorage.setItem('lastUpdatePrompt', Date.now().toString());
 }
 
+// Add manual refresh button
+function addManualRefreshButton() {
+    // Check if button already exists
+    if (document.getElementById('manualRefreshBtn')) {
+        return;
+    }
+    
+    // Create refresh button
+    const refreshButton = document.createElement('button');
+    refreshButton.id = 'manualRefreshBtn';
+    refreshButton.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+        <span>Refresh App</span>
+    `;
+    
+    // Add styles
+    const style = document.createElement('style');
+    style.textContent = `
+        #manualRefreshBtn {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #0F3D3E, #2D7A7B);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 9998;
+            box-shadow: 0 4px 20px rgba(15, 61, 62, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            opacity: 0.95;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #manualRefreshBtn:hover {
+            opacity: 1;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 25px rgba(15, 61, 62, 0.4);
+        }
+        
+        #manualRefreshBtn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+        
+        #manualRefreshBtn svg {
+            animation: none;
+            width: 16px;
+            height: 16px;
+        }
+        
+        #manualRefreshBtn.refreshing svg {
+            animation: spin 1s linear infinite;
+        }
+        
+        #manualRefreshBtn.refreshing span {
+            display: none;
+        }
+        
+        #manualRefreshBtn.refreshing::after {
+            content: "Updating...";
+            font-size: 13px;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            #manualRefreshBtn {
+                bottom: 90px;
+                right: 15px;
+                padding: 10px 16px;
+                font-size: 12px;
+                border-radius: 40px;
+                box-shadow: 0 3px 15px rgba(15, 61, 62, 0.4);
+            }
+            
+            #manualRefreshBtn span {
+                display: none;
+            }
+            
+            #manualRefreshBtn::before {
+                content: "🔄";
+                font-size: 16px;
+                margin-right: 0;
+            }
+            
+            #manualRefreshBtn svg {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #manualRefreshBtn {
+                bottom: 85px;
+                right: 12px;
+                padding: 8px 14px;
+                font-size: 11px;
+                border-radius: 35px;
+            }
+            
+            #manualRefreshBtn::before {
+                font-size: 14px;
+            }
+        }
+        
+        /* Ensure it doesn't interfere with AI button */
+        @media (max-width: 768px) {
+            #manualRefreshBtn {
+                bottom: 100px;
+            }
+        }
+    `;
+    
+    document.head.appendChild(style);
+    document.body.appendChild(refreshButton);
+    
+    // Add click handler
+    refreshButton.addEventListener('click', handleManualRefresh);
+}
+
+// Handle manual refresh
+async function handleManualRefresh() {
+    const button = document.getElementById('manualRefreshBtn');
+    if (!button) return;
+    
+    // Show loading state
+    button.classList.add('refreshing');
+    button.disabled = true;
+    
+    try {
+        // Clear all caches
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => caches.delete(name)));
+            console.log('Manual refresh: All caches cleared');
+        }
+        
+        // Clear localStorage markers
+        localStorage.removeItem('lastUpdatePrompt');
+        localStorage.removeItem('lastVersion');
+        
+        // Show success message
+        showToast('🔄 Refreshing app with latest updates...', 'success');
+        
+        // Wait a moment then reload
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Manual refresh failed:', error);
+        showToast('Refresh failed. Please try again.', 'error');
+        
+        // Reset button
+        button.classList.remove('refreshing');
+        button.disabled = false;
+    }
+}
+
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Track app start time for smart update logic
     if (!localStorage.getItem('appStartTime')) {
         localStorage.setItem('appStartTime', Date.now().toString());
     }
+    
+    // Add manual refresh button
+    addManualRefreshButton();
     
     // Check for update notification (non-intrusive)
     setTimeout(() => {
