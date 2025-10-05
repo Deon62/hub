@@ -451,25 +451,6 @@ function renderListings() {
         });
     });
     
-    // Add event listeners for delete buttons
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const businessId = e.target.closest('.btn-delete').dataset.businessId;
-            deleteBusiness(businessId);
-        });
-    });
-    
-    // Add event listeners for edit buttons
-    document.querySelectorAll('.btn-edit').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const businessId = e.target.closest('.btn-edit').dataset.businessId;
-            editBusiness(businessId);
-        });
-    });
 }
 
 /**
@@ -524,18 +505,6 @@ function createBusinessCard(listing) {
                                 <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                             </svg>
                         </button>`
-                    }
-                    ${isUserCreatedBusiness(listing) ? 
-                        `<button class="btn btn-edit" aria-label="Edit business" data-business-id="${listing.id}">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                            </svg>
-                        </button>
-                        <button class="btn btn-delete" aria-label="Delete business" data-business-id="${listing.id}">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                            </svg>
-                        </button>` : ''
                     }
                     <a href="business-profile.html?id=${listing.id}" class="view-bsn-link">View BSN</a>
                     </div>
@@ -772,66 +741,36 @@ function handleFormSubmit(e) {
                 tags = [tagsSelect.value];
             }
             
-            const isEditing = elements.submitForm.dataset.editingId;
-            let businessData;
+            // Create new business
+            const businessData = {
+                id: generateId(),
+                name: formData.get('businessName'),
+                category: formData.get('category'),
+                type: formData.get('type'),
+                description: formData.get('description'),
+                contactMethod: formData.get('contactMethod'),
+                contactInfo: formData.get('contactInfo'),
+                instagram: formData.get('instagram') || null,
+                location: formData.get('location') || null,
+                tags: tags,
+                image: document.getElementById('imagePreview').querySelector('img')?.src || null,
+                rating: 0,
+                reviewCount: 0,
+                status: 'available',
+                createdAt: new Date().toISOString()
+            };
             
-            if (isEditing) {
-                // Update existing business
-                const existingBusiness = listings.find(l => l.id === isEditing);
-                businessData = {
-                    ...existingBusiness,
-                    name: formData.get('businessName'),
-                    category: formData.get('category'),
-                    type: formData.get('type'),
-                    description: formData.get('description'),
-                    contactMethod: formData.get('contactMethod'),
-                    contactInfo: formData.get('contactInfo'),
-                    instagram: formData.get('instagram') || null,
-                    location: formData.get('location') || null,
-                    tags: tags,
-                    image: document.getElementById('imagePreview').querySelector('img')?.src || existingBusiness.image,
-                    updatedAt: new Date().toISOString()
-                };
-                
-                // Update in listings
-                const businessIndex = listings.findIndex(l => l.id === isEditing);
-                if (businessIndex !== -1) {
-                    listings[businessIndex] = businessData;
+            // Add to listings
+            listings.unshift(businessData);
+            
+            showToast('🎉 Business posted successfully! Redirecting to home...', 'success');
+            
+            // Navigate to home page after delay for new businesses
+            setTimeout(() => {
+                if (isBusinessesPage) {
+                    window.location.href = 'index.html';
                 }
-                
-                showToast('🎉 Business updated successfully!', 'success');
-            } else {
-                // Create new business
-                businessData = {
-                    id: generateId(),
-                    name: formData.get('businessName'),
-                    category: formData.get('category'),
-                    type: formData.get('type'),
-                    description: formData.get('description'),
-                    contactMethod: formData.get('contactMethod'),
-                    contactInfo: formData.get('contactInfo'),
-                    instagram: formData.get('instagram') || null,
-                    location: formData.get('location') || null,
-                    tags: tags,
-                    image: document.getElementById('imagePreview').querySelector('img')?.src || null,
-                    rating: 0,
-                    reviewCount: 0,
-                    status: 'available',
-                    createdAt: new Date().toISOString()
-                };
-                
-                // Add to listings
-                listings.unshift(businessData);
-                
-                showToast('🎉 Business posted successfully! Redirecting to home...', 'success');
-                
-                // Navigate to home page after delay for new businesses
-                setTimeout(() => {
-                    if (isBusinessesPage) {
-                        window.location.href = 'index.html';
-                    }
-                }, 2000);
-            }
+            }, 2000);
             
             saveListings();
             
@@ -841,12 +780,11 @@ function handleFormSubmit(e) {
             // Clear form
             elements.submitForm.reset();
             clearFormPreview();
-            delete elements.submitForm.dataset.editingId;
             
             // Reset submit button text
             const submitBtn = elements.submitForm.querySelector('button[type="submit"]');
             if (submitBtn) {
-                submitBtn.textContent = 'Submit Business';
+                submitBtn.textContent = 'Post Your Hustle';
             }
             
             // Close modal
@@ -885,14 +823,6 @@ function clearFormPreview() {
     }
 }
 
-/**
- * Check if a business was created by the user (not a sample business)
- */
-function isUserCreatedBusiness(listing) {
-    // Sample businesses have specific IDs, user-created ones have generated IDs
-    const sampleBusinessIds = ['deon-tech-solutions', 'deon-graphics-design', 'deon-tutoring-services', 'deon-digital-marketing', 'pinakle-consulting'];
-    return !sampleBusinessIds.includes(listing.id);
-}
 
 /**
  * Generate star rating HTML
@@ -922,81 +852,7 @@ function generateStarRating(rating) {
     return stars;
 }
 
-/**
- * Delete a business listing
- */
-function deleteBusiness(businessId) {
-    // Show confirmation dialog
-    if (!confirm('Are you sure you want to delete this business? This action cannot be undone.')) {
-        return;
-    }
-    
-    // Find and remove the business from listings
-    const businessIndex = listings.findIndex(listing => listing.id === businessId);
-    if (businessIndex === -1) {
-        showToast('Business not found', 'error');
-        return;
-    }
-    
-    // Remove from listings
-    listings.splice(businessIndex, 1);
-    
-    // Update filtered listings
-    filteredListings = [...listings];
-    
-    // Save to localStorage
-    saveListings();
-    
-    // Update display
-    renderListings();
-    updateResultsCount();
-    
-    // Show success message
-    showToast('Business deleted successfully', 'success');
-}
 
-/**
- * Edit a business listing
- */
-function editBusiness(businessId) {
-    const business = listings.find(listing => listing.id === businessId);
-    if (!business) {
-        showToast('Business not found', 'error');
-        return;
-    }
-    
-    // Open the submit modal
-    openSubmitModal();
-    
-    // Populate the form with existing data
-    setTimeout(() => {
-        const form = elements.submitForm;
-        if (form) {
-            form.businessName.value = business.name || '';
-            form.category.value = business.category || '';
-            form.type.value = business.type || '';
-            form.description.value = business.description || '';
-            form.contactMethod.value = business.contactMethod || '';
-            form.contactInfo.value = business.contactInfo || '';
-            form.instagram.value = business.instagram || '';
-            form.location.value = business.location || '';
-            
-            // Set tags
-            if (business.tags && business.tags.length > 0) {
-                form.tags.value = business.tags[0] || '';
-            }
-            
-            // Store the business ID for updating
-            form.dataset.editingId = businessId;
-            
-            // Change submit button text
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                submitBtn.textContent = 'Update Business';
-            }
-        }
-    }, 100);
-}
 
 /**
  * Validate form inputs
