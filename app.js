@@ -2093,6 +2093,9 @@ This is a Progressive Web App (PWA) - you can even install it on your phone like
 // Service Worker Update Management
 let swRegistration = null;
 let updateAvailable = false;
+let lastUpdateCheck = 0;
+let updateCheckInterval = 5 * 60 * 1000; // Check every 5 minutes
+let showUpdateButton = false;
 
 // Initialize service worker
 async function initServiceWorker() {
@@ -2108,10 +2111,15 @@ async function initServiceWorker() {
                 
                 newWorker.addEventListener('statechange', () => {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        console.log('New service worker installed, updating silently');
-                        // Update silently without user notification
+                        console.log('New service worker installed');
                         updateAvailable = true;
-                        handleSilentUpdate();
+                        
+                        // Check if we should show update button or update silently
+                        if (shouldShowUpdateButton()) {
+                            showSmartUpdateButton();
+                        } else {
+                            handleSilentUpdate();
+                        }
                     }
                 });
             });
@@ -2121,12 +2129,25 @@ async function initServiceWorker() {
                 if (event.data.type === 'UPDATE_AVAILABLE') {
                     console.log('Update available from service worker');
                     updateAvailable = true;
-                    handleSilentUpdate();
+                    
+                    if (shouldShowUpdateButton()) {
+                        showSmartUpdateButton();
+                    } else {
+                        handleSilentUpdate();
+                    }
                 }
             });
             
             // Check for updates periodically
-            setInterval(checkForUpdates, 60000); // Check every minute
+            setInterval(checkForUpdates, updateCheckInterval);
+            
+            // Check for updates on page focus (when user returns to app)
+            window.addEventListener('focus', () => {
+                const now = Date.now();
+                if (now - lastUpdateCheck > updateCheckInterval) {
+                    checkForUpdates();
+                }
+            });
             
         } catch (error) {
             console.error('Service Worker registration failed:', error);
@@ -2138,11 +2159,216 @@ async function initServiceWorker() {
 async function checkForUpdates() {
     if (swRegistration) {
         try {
+            lastUpdateCheck = Date.now();
             await swRegistration.update();
         } catch (error) {
             console.log('Update check failed:', error);
         }
     }
+}
+
+// Determine if we should show update button instead of silent update
+function shouldShowUpdateButton() {
+    // Show update button if:
+    // 1. User has been using the app for more than 2 minutes (not just browsing)
+    // 2. It's been more than 1 hour since last update prompt
+    // 3. User is actively using the app (not idle)
+    
+    const now = Date.now();
+    const lastUpdatePrompt = localStorage.getItem('lastUpdatePrompt') || 0;
+    const appStartTime = localStorage.getItem('appStartTime') || now;
+    const timeSinceLastPrompt = now - parseInt(lastUpdatePrompt);
+    const timeUsingApp = now - parseInt(appStartTime);
+    
+    // Don't show if user just started using the app
+    if (timeUsingApp < 2 * 60 * 1000) { // Less than 2 minutes
+        return false;
+    }
+    
+    // Don't show if we prompted recently (less than 1 hour ago)
+    if (timeSinceLastPrompt < 60 * 60 * 1000) { // Less than 1 hour
+        return false;
+    }
+    
+    // Show update button for better user control
+    return true;
+}
+
+// Show smart update button that doesn't nag
+function showSmartUpdateButton() {
+    // Remove any existing update button
+    const existingButton = document.getElementById('smartUpdateButton');
+    if (existingButton) {
+        existingButton.remove();
+    }
+    
+    // Create smart update button
+    const updateButton = document.createElement('div');
+    updateButton.id = 'smartUpdateButton';
+    updateButton.innerHTML = `
+        <div class="smart-update-banner">
+            <div class="update-content">
+                <div class="update-icon">🔄</div>
+                <div class="update-text">
+                    <strong>New features available!</strong>
+                    <span>Tap to refresh and get the latest updates</span>
+                </div>
+                <button class="update-btn" onclick="applyUpdate()">Update</button>
+                <button class="dismiss-btn" onclick="dismissUpdate()">Later</button>
+            </div>
+        </div>
+    `;
+    
+    // Add styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .smart-update-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #0F3D3E, #2D7A7B);
+            color: white;
+            padding: 12px 16px;
+            z-index: 10000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .update-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 100%;
+        }
+        
+        .update-icon {
+            font-size: 20px;
+            animation: spin 2s linear infinite;
+        }
+        
+        .update-text {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .update-text strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        .update-text span {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .update-btn, .dismiss-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .update-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .update-btn:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+        }
+        
+        .dismiss-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .dismiss-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 480px) {
+            .update-content {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .update-text {
+                text-align: center;
+            }
+            
+            .update-btn, .dismiss-btn {
+                width: 100%;
+            }
+        }
+    `;
+    
+    document.head.appendChild(style);
+    document.body.appendChild(updateButton);
+    
+    // Auto-dismiss after 10 seconds if user doesn't interact
+    setTimeout(() => {
+        if (document.getElementById('smartUpdateButton')) {
+            dismissUpdate();
+        }
+    }, 10000);
+}
+
+// Apply update when user clicks update button
+function applyUpdate() {
+    if (updateAvailable && swRegistration && swRegistration.waiting) {
+        // Record that user applied update
+        localStorage.setItem('lastUpdatePrompt', Date.now().toString());
+        
+        // Tell the waiting service worker to skip waiting and become active
+        swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        
+        // Show loading state
+        const updateBtn = document.querySelector('.update-btn');
+        if (updateBtn) {
+            updateBtn.textContent = 'Updating...';
+            updateBtn.disabled = true;
+        }
+        
+        // Reload the page to use the new service worker
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    }
+}
+
+// Dismiss update button
+function dismissUpdate() {
+    const updateButton = document.getElementById('smartUpdateButton');
+    if (updateButton) {
+        updateButton.style.animation = 'slideUp 0.3s ease-out';
+        setTimeout(() => {
+            updateButton.remove();
+        }, 300);
+    }
+    
+    // Record dismissal time
+    localStorage.setItem('lastUpdatePrompt', Date.now().toString());
+    
+    // Apply update silently in background after dismissal
+    setTimeout(() => {
+        handleSilentUpdate();
+    }, 5000); // Wait 5 seconds then update silently
 }
 
 // Handle silent updates
@@ -2158,6 +2384,11 @@ function handleSilentUpdate() {
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Track app start time for smart update logic
+    if (!localStorage.getItem('appStartTime')) {
+        localStorage.setItem('appStartTime', Date.now().toString());
+    }
+    
     init();
     initServiceWorker();
 });

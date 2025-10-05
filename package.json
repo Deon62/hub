@@ -3,9 +3,7 @@
   "version": "1.0.6",
   "description": "BSN with silent update mechanism",
   "scripts": {
-    "deploy": "node deploy-update.js",
-    "update": "node update-version.js",
-    "test": "echo 'Open update-test.html in your browser to test updates'"
+    "test": "echo 'BSN is ready for deployment!'"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0"

@@ -2,7 +2,7 @@
 const CACHE_NAME = 'student-hustle-hub-v6';
 const STATIC_CACHE = 'static-cache-v6';
 const DYNAMIC_CACHE = 'dynamic-cache-v6';
-const UPDATE_CHECK_INTERVAL = 30000; // Check for updates every 30 seconds
+const UPDATE_CHECK_INTERVAL = 15000; // Check for updates every 15 seconds (more aggressive for mobile)
 
 // Essential assets to cache immediately
 const urlsToCache = [
