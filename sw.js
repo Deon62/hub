@@ -64,6 +64,16 @@ self.addEventListener('activate', event => {
             console.log('[SW] Service worker activated successfully');
             // Take control of all clients immediately
             return self.clients.claim();
+        }).then(() => {
+            // Notify clients that the service worker is ready
+            return self.clients.matchAll().then(clients => {
+                clients.forEach(client => {
+                    client.postMessage({
+                        type: 'SW_READY',
+                        payload: { version: 'v4' }
+                    });
+                });
+            });
         })
     );
 });

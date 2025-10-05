@@ -806,7 +806,7 @@
         // Enhanced PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js?v=' + Date.now())
+                navigator.serviceWorker.register('/sw.js?v=4')
                     .then(registration => {
                         console.log('✅ Service Worker registered successfully:', registration);
                         
@@ -815,8 +815,12 @@
                             const newWorker = registration.installing;
                             newWorker.addEventListener('statechange', () => {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New content is available, show update notification
-                                    showUpdateNotification();
+                                    // Check if we've already shown an update notification this session
+                                    if (!sessionStorage.getItem('updateNotificationShown')) {
+                                        // New content is available, show update notification
+                                        showUpdateNotification();
+                                        sessionStorage.setItem('updateNotificationShown', 'true');
+                                    }
                                 }
                             });
                         });
@@ -825,6 +829,8 @@
                         navigator.serviceWorker.addEventListener('message', event => {
                             if (event.data && event.data.type === 'CACHE_UPDATED') {
                                 console.log('📦 Cache updated:', event.data.payload);
+                            } else if (event.data && event.data.type === 'SW_READY') {
+                                console.log('✅ Service Worker ready:', event.data.payload);
                             }
                         });
                     })
@@ -902,6 +908,11 @@
         
         // Show update notification
         function showUpdateNotification() {
+            // Don't show if already dismissed in this session
+            if (sessionStorage.getItem('updateDismissed')) {
+                return;
+            }
+            
             const notification = document.createElement('div');
             notification.innerHTML = `
                 <div style="
@@ -919,15 +930,26 @@
                 ">
                     <div style="font-weight: 600; margin-bottom: 8px;">🔄 Update Available</div>
                     <div style="font-size: 14px; margin-bottom: 12px;">A new version is ready!</div>
-                    <button onclick="this.parentElement.parentElement.remove(); window.location.reload();" style="
-                        background: rgba(255,255,255,0.2);
-                        border: 1px solid rgba(255,255,255,0.3);
-                        color: white;
-                        padding: 6px 12px;
-                        border-radius: 4px;
-                        cursor: pointer;
-                        font-size: 12px;
-                    ">Update Now</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="sessionStorage.removeItem('updateNotificationShown'); this.parentElement.parentElement.remove(); window.location.reload();" style="
+                            background: rgba(255,255,255,0.2);
+                            border: 1px solid rgba(255,255,255,0.3);
+                            color: white;
+                            padding: 6px 12px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 12px;
+                        ">Update Now</button>
+                        <button onclick="sessionStorage.setItem('updateDismissed', 'true'); this.parentElement.parentElement.remove();" style="
+                            background: transparent;
+                            border: 1px solid rgba(255,255,255,0.3);
+                            color: white;
+                            padding: 6px 12px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 12px;
+                        ">Later</button>
+                    </div>
                 </div>
             `;
             document.body.appendChild(notification);
