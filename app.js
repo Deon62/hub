@@ -2304,12 +2304,265 @@ function handleSilentUpdate() {
     }
 }
 
+// Force cache refresh for mobile devices
+async function forceCacheRefresh() {
+    try {
+        // Clear all caches
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => caches.delete(name)));
+            console.log('All caches cleared for fresh start');
+        }
+        
+        // Clear localStorage
+        localStorage.clear();
+        
+        // Force reload with cache bypass
+        window.location.reload(true);
+    } catch (error) {
+        console.log('Cache refresh failed:', error);
+    }
+}
+
+// Check if we need to show update notification
+function checkForUpdateNotification() {
+    const lastVersion = localStorage.getItem('lastVersion');
+    const currentVersion = 'v7';
+    const lastUpdatePrompt = localStorage.getItem('lastUpdatePrompt');
+    const now = Date.now();
+    
+    // Only show update notification if:
+    // 1. Version has changed
+    // 2. Haven't prompted in last 24 hours
+    // 3. User has been using app for at least 1 minute
+    if (lastVersion !== currentVersion) {
+        const timeSinceLastPrompt = now - parseInt(lastUpdatePrompt || 0);
+        const appStartTime = parseInt(localStorage.getItem('appStartTime') || now);
+        const timeUsingApp = now - appStartTime;
+        
+        // Don't show if user just started or prompted recently
+        if (timeUsingApp > 60000 && timeSinceLastPrompt > 24 * 60 * 60 * 1000) {
+            showUpdateNotification();
+            return true;
+        }
+    }
+    return false;
+}
+
+// Show update notification with user control
+function showUpdateNotification() {
+    // Remove any existing notification
+    const existingNotification = document.getElementById('updateNotification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create update notification
+    const notification = document.createElement('div');
+    notification.id = 'updateNotification';
+    notification.innerHTML = `
+        <div class="update-notification">
+            <div class="update-content">
+                <div class="update-icon">🔄</div>
+                <div class="update-text">
+                    <h4>App Update Available</h4>
+                    <p>Get the latest features and improvements</p>
+                </div>
+                <div class="update-actions">
+                    <button class="update-btn" onclick="applyUpdateNow()">Update Now</button>
+                    <button class="clear-btn" onclick="clearCacheAndUpdate()">Clear & Update</button>
+                    <button class="later-btn" onclick="dismissUpdateNotification()">Later</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .update-notification {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #0F3D3E, #2D7A7B);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 10000;
+            animation: slideInDown 0.3s ease-out;
+        }
+        
+        .update-content {
+            padding: 20px;
+        }
+        
+        .update-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .update-text h4 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+        }
+        
+        .update-text p {
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .update-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .update-btn, .clear-btn, .later-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 80px;
+        }
+        
+        .update-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .update-btn:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+        }
+        
+        .clear-btn {
+            background: #FF9800;
+            color: white;
+        }
+        
+        .clear-btn:hover {
+            background: #F57C00;
+            transform: translateY(-1px);
+        }
+        
+        .later-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .later-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        @keyframes slideInDown {
+            from { 
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .update-notification {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+            }
+            
+            .update-actions {
+                flex-direction: column;
+            }
+            
+            .update-btn, .clear-btn, .later-btn {
+                width: 100%;
+            }
+        }
+    `;
+    
+    document.head.appendChild(style);
+    document.body.appendChild(notification);
+    
+    // Auto-dismiss after 15 seconds if user doesn't interact
+    setTimeout(() => {
+        if (document.getElementById('updateNotification')) {
+            dismissUpdateNotification();
+        }
+    }, 15000);
+}
+
+// Apply update now (gentle update)
+function applyUpdateNow() {
+    localStorage.setItem('lastVersion', 'v7');
+    localStorage.setItem('lastUpdatePrompt', Date.now().toString());
+    
+    // Remove notification
+    const notification = document.getElementById('updateNotification');
+    if (notification) {
+        notification.remove();
+    }
+    
+    // Show loading state
+    showToast('🔄 Updating app...', 'success');
+    
+    // Reload after short delay
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+}
+
+// Clear cache and update (nuclear option)
+function clearCacheAndUpdate() {
+    localStorage.setItem('lastVersion', 'v7');
+    localStorage.setItem('lastUpdatePrompt', Date.now().toString());
+    
+    // Remove notification
+    const notification = document.getElementById('updateNotification');
+    if (notification) {
+        notification.remove();
+    }
+    
+    // Show loading state
+    showToast('🧹 Clearing cache and updating...', 'success');
+    
+    // Clear cache and reload
+    forceCacheRefresh();
+}
+
+// Dismiss update notification
+function dismissUpdateNotification() {
+    const notification = document.getElementById('updateNotification');
+    if (notification) {
+        notification.style.animation = 'slideOutUp 0.3s ease-out';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }
+    
+    // Record dismissal
+    localStorage.setItem('lastUpdatePrompt', Date.now().toString());
+}
+
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Track app start time for smart update logic
     if (!localStorage.getItem('appStartTime')) {
         localStorage.setItem('appStartTime', Date.now().toString());
     }
+    
+    // Check for update notification (non-intrusive)
+    setTimeout(() => {
+        checkForUpdateNotification();
+    }, 2000); // Wait 2 seconds before checking
     
     init();
     initServiceWorker();

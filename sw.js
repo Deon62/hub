@@ -29,22 +29,31 @@ const urlsToCache = [
 
 // Install event - Cache essential assets
 self.addEventListener('install', event => {
-    console.log('[SW] Installing service worker...');
+    console.log('[SW] Installing service worker v7...');
     
     event.waitUntil(
-        caches.open(STATIC_CACHE)
-            .then(cache => {
-                console.log('[SW] Caching essential assets...');
-                return cache.addAll(urlsToCache);
-            })
-            .then(() => {
-                console.log('[SW] Essential assets cached successfully');
-                // Force activation of new service worker immediately
-                return self.skipWaiting();
-            })
-            .catch(error => {
-                console.error('[SW] Failed to cache essential assets:', error);
-            })
+        // First, clear ALL existing caches
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    console.log('[SW] Deleting old cache:', cacheName);
+                    return caches.delete(cacheName);
+                })
+            );
+        }).then(() => {
+            console.log('[SW] All old caches cleared');
+            // Now cache new assets
+            return caches.open(STATIC_CACHE);
+        }).then(cache => {
+            console.log('[SW] Caching essential assets...');
+            return cache.addAll(urlsToCache);
+        }).then(() => {
+            console.log('[SW] Essential assets cached successfully');
+            // Force activation of new service worker immediately
+            return self.skipWaiting();
+        }).catch(error => {
+            console.error('[SW] Failed to cache essential assets:', error);
+        })
     );
 });
 
@@ -104,88 +113,101 @@ self.addEventListener('fetch', event => {
     console.log('[SW] Fetching:', request.url);
     
     event.respondWith(
-        caches.match(request)
-            .then(response => {
-                // Return cached version if available
-                if (response) {
-                    console.log('[SW] Serving from cache:', request.url);
-                    return response;
+        // For critical files, always try network first to get latest version
+        (async () => {
+            // Critical files that should always be fresh
+            const criticalFiles = ['/app.js', '/sw.js', '/version.json', '/manifest.json'];
+            const isCriticalFile = criticalFiles.some(file => request.url.includes(file));
+            
+            if (isCriticalFile) {
+                try {
+                    console.log('[SW] Fetching critical file from network:', request.url);
+                    const networkResponse = await fetch(request);
+                    if (networkResponse.ok) {
+                        // Cache the fresh response
+                        const cache = await caches.open(STATIC_CACHE);
+                        cache.put(request, networkResponse.clone());
+                        return networkResponse;
+                    }
+                } catch (error) {
+                    console.log('[SW] Network fetch failed for critical file, trying cache');
                 }
-                
-                // For business profile pages, try to serve the base template
-                if (url.pathname === '/business-profile.html') {
-                    console.log('[SW] Business profile page requested, serving base template');
-                    return caches.match('/business-profile.html')
-                        .then(cachedResponse => {
-                            if (cachedResponse) {
-                                return cachedResponse;
-                            }
-                            // If not cached, fetch and cache it
-                            return fetch('/business-profile.html')
-                                .then(fetchResponse => {
-                                    if (fetchResponse && fetchResponse.status === 200) {
-                                        const responseToCache = fetchResponse.clone();
-                                        caches.open(STATIC_CACHE)
-                                            .then(cache => {
-                                                console.log('[SW] Caching business profile template');
-                                                cache.put('/business-profile.html', responseToCache);
-                                            });
-                                    }
-                                    return fetchResponse;
-                                });
-                        });
+            }
+            
+            // For other files, try cache first
+            const cachedResponse = await caches.match(request);
+            if (cachedResponse) {
+                console.log('[SW] Serving from cache:', request.url);
+                return cachedResponse;
+            }
+            
+            // For business profile pages, try to serve the base template
+            if (url.pathname === '/business-profile.html') {
+                console.log('[SW] Business profile page requested, serving base template');
+                const businessProfileResponse = await caches.match('/business-profile.html');
+                if (businessProfileResponse) {
+                    return businessProfileResponse;
                 }
-                
-                // Try to fetch from network
-                return fetch(request)
-                    .then(fetchResponse => {
-                        // Check if response is valid
-                        if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
-                            return fetchResponse;
-                        }
-                        
-                        // Clone the response
+                // If not cached, fetch and cache it
+                try {
+                    const fetchResponse = await fetch('/business-profile.html');
+                    if (fetchResponse && fetchResponse.status === 200) {
                         const responseToCache = fetchResponse.clone();
-                        
-                        // Cache dynamic content
-                        caches.open(DYNAMIC_CACHE)
-                            .then(cache => {
-                                console.log('[SW] Caching dynamic content:', request.url);
-                                cache.put(request, responseToCache);
-                            });
-                        
-                        return fetchResponse;
-                    })
-                    .catch(error => {
-                        console.log('[SW] Network request failed:', request.url, error);
-                        
-                        // Special handling for business profile pages
-                        if (url.pathname === '/business-profile.html') {
-                            console.log('[SW] Serving business profile template offline');
-                            return caches.match('/business-profile.html')
-                                .then(cachedResponse => {
-                                    if (cachedResponse) {
-                                        return cachedResponse;
-                                    }
-                                    // Fallback to offline page if business profile not cached
-                                    return caches.match('/offline.html');
-                                });
-                        }
-                        
-                        // Return offline fallback for navigation requests
-                        if (request.mode === 'navigate') {
-                            return caches.match('/offline.html');
-                        }
-                        
-                        // Return offline fallback for HTML pages
-                        if (request.headers.get('accept').includes('text/html')) {
-                            return caches.match('/offline.html');
-                        }
-                        
-                        // For other requests, you might want to return a default response
-                        throw error;
-                    });
-            })
+                        const cache = await caches.open(STATIC_CACHE);
+                        console.log('[SW] Caching business profile template');
+                        cache.put('/business-profile.html', responseToCache);
+                    }
+                    return fetchResponse;
+                } catch (error) {
+                    console.log('[SW] Business profile fetch failed');
+                }
+            }
+            
+            // Try to fetch from network
+            try {
+                const fetchResponse = await fetch(request);
+                // Check if response is valid
+                if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+                    return fetchResponse;
+                }
+                
+                // Clone the response
+                const responseToCache = fetchResponse.clone();
+                
+                // Cache dynamic content
+                const cache = await caches.open(DYNAMIC_CACHE);
+                console.log('[SW] Caching dynamic content:', request.url);
+                cache.put(request, responseToCache);
+                
+                return fetchResponse;
+            } catch (error) {
+                console.log('[SW] Network request failed:', request.url, error);
+                
+                // Special handling for business profile pages
+                if (url.pathname === '/business-profile.html') {
+                    console.log('[SW] Serving business profile template offline');
+                    const businessProfileResponse = await caches.match('/business-profile.html');
+                    if (businessProfileResponse) {
+                        return businessProfileResponse;
+                    }
+                    // Fallback to offline page if business profile not cached
+                    return caches.match('/offline.html');
+                }
+                
+                // Return offline fallback for navigation requests
+                if (request.mode === 'navigate') {
+                    return caches.match('/offline.html');
+                }
+                
+                // Return offline fallback for HTML pages
+                if (request.headers.get('accept').includes('text/html')) {
+                    return caches.match('/offline.html');
+                }
+                
+                // For other requests, you might want to return a default response
+                throw error;
+            }
+        })()
     );
 });
 
