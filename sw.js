@@ -2,7 +2,7 @@
 const CACHE_NAME = 'student-hustle-hub-v6';
 const STATIC_CACHE = 'static-cache-v6';
 const DYNAMIC_CACHE = 'dynamic-cache-v6';
-const UPDATE_CHECK_INTERVAL = 15000; // Check for updates every 15 seconds (more aggressive for mobile)
+const UPDATE_CHECK_INTERVAL = 5 * 60 * 1000; // Check for updates every 5 minutes
 
 // Essential assets to cache immediately
 const urlsToCache = [
@@ -285,6 +285,15 @@ async function getCurrentVersion() {
 }
 
 function shouldUpdate(newVersion, currentVersion) {
+    // Only update if there's a significant version difference
+    const timeDiff = newVersion.timestamp - currentVersion.timestamp;
+    
+    // Don't update if the difference is less than 1 minute (prevents constant updates)
+    if (timeDiff < 60000) {
+        console.log('[SW] Update skipped - too recent');
+        return false;
+    }
+    
     // Compare version numbers and timestamps
     if (newVersion.timestamp > currentVersion.timestamp) {
         return true;

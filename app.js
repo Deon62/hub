@@ -1952,6 +1952,9 @@ let updateAvailable = false;
 let lastUpdateCheck = 0;
 let updateCheckInterval = 5 * 60 * 1000; // Check every 5 minutes
 let showUpdateButton = false;
+let lastUpdateTime = 0;
+let updateCooldown = 2 * 60 * 1000; // 2 minutes cooldown between updates
+let isUpdating = false;
 
 // Initialize service worker
 async function initServiceWorker() {
@@ -1968,6 +1971,14 @@ async function initServiceWorker() {
                 newWorker.addEventListener('statechange', () => {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                         console.log('New service worker installed');
+                        
+                        // Check if enough time has passed since last update
+                        const now = Date.now();
+                        if (now - lastUpdateTime < updateCooldown) {
+                            console.log('Update cooldown active, skipping update');
+                            return;
+                        }
+                        
                         updateAvailable = true;
                         
                         // Check if we should show update button or update silently
@@ -1984,6 +1995,14 @@ async function initServiceWorker() {
             navigator.serviceWorker.addEventListener('message', (event) => {
                 if (event.data.type === 'UPDATE_AVAILABLE') {
                     console.log('Update available from service worker');
+                    
+                    // Check if enough time has passed since last update
+                    const now = Date.now();
+                    if (now - lastUpdateTime < updateCooldown) {
+                        console.log('Update cooldown active, skipping update');
+                        return;
+                    }
+                    
                     updateAvailable = true;
                     
                     if (shouldShowUpdateButton()) {
@@ -2013,9 +2032,17 @@ async function initServiceWorker() {
 
 // Check for updates manually
 async function checkForUpdates() {
-    if (swRegistration) {
+    if (swRegistration && !isUpdating) {
         try {
-            lastUpdateCheck = Date.now();
+            const now = Date.now();
+            
+            // Don't check if we're in cooldown period
+            if (now - lastUpdateTime < updateCooldown) {
+                console.log('Update check skipped - cooldown active');
+                return;
+            }
+            
+            lastUpdateCheck = now;
             await swRegistration.update();
         } catch (error) {
             console.log('Update check failed:', error);
@@ -2187,7 +2214,10 @@ function showSmartUpdateButton() {
 
 // Apply update when user clicks update button
 function applyUpdate() {
-    if (updateAvailable && swRegistration && swRegistration.waiting) {
+    if (updateAvailable && swRegistration && swRegistration.waiting && !isUpdating) {
+        isUpdating = true;
+        lastUpdateTime = Date.now();
+        
         // Record that user applied update
         localStorage.setItem('lastUpdatePrompt', Date.now().toString());
         
@@ -2229,12 +2259,17 @@ function dismissUpdate() {
 
 // Handle silent updates
 function handleSilentUpdate() {
-    if (updateAvailable && swRegistration && swRegistration.waiting) {
+    if (updateAvailable && swRegistration && swRegistration.waiting && !isUpdating) {
+        isUpdating = true;
+        lastUpdateTime = Date.now();
+        
         // Tell the waiting service worker to skip waiting and become active
         swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
         
         // Reload the page to use the new service worker
-        window.location.reload();
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000); // Wait 2 seconds before reloading
     }
 }
 
