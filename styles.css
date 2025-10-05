@@ -1917,6 +1917,65 @@ button[type="submit"]:disabled::after {
     font-weight: 500;
 }
 
+/* Like Button Styles */
+.btn-like {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-like:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+    transform: translateY(-1px);
+}
+
+.btn-like.liked {
+    background: #fce4ec;
+    border-color: #e91e63;
+    color: #e91e63;
+}
+
+.btn-like.liked:hover {
+    background: #f8bbd9;
+}
+
+.heart-icon {
+    transition: all 0.2s ease;
+    fill: currentColor;
+}
+
+.btn-like.liked .heart-icon {
+    fill: #e91e63;
+    animation: heartBeat 0.6s ease-in-out;
+}
+
+.like-count {
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 16px;
+    text-align: center;
+}
+
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.3); }
+    50% { transform: scale(1.1); }
+    75% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
 /* AI Assistant Styles */
 .ai-assistant-btn {
     position: fixed;
@@ -3095,6 +3154,13 @@ textarea:focus {
 .business-profile-location svg {
     flex-shrink: 0;
     opacity: 0.8;
+}
+
+.business-profile-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
 }
 
 .business-profile-status {

@@ -236,6 +236,9 @@ function setupEventListeners() {
     // AI Assistant functionality
     setupAIAssistant();
     
+    // Like functionality
+    setupLikeButtons();
+    
     
     // Tag dropdown functionality
     const tagsSelect = document.getElementById('tags');
@@ -499,6 +502,12 @@ function createBusinessCard(listing) {
                         <span class="rating-text">${(listing.rating || 0).toFixed(1)} (${listing.reviewCount || 0} reviews)</span>
                     </div>
                     <div class="business-actions">
+                        <button class="btn btn-like" aria-label="Like this business" data-business-id="${listing.id}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                            <span class="like-count">${getLikeCount(listing.id)}</span>
+                        </button>
                     ${listing.contactMethod === 'whatsapp' ? 
                         `<button class="btn btn-whatsapp" aria-label="Contact via WhatsApp">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -1439,6 +1448,14 @@ function renderBusinessProfile() {
             <div class="business-profile-status ${business.status || 'available'}">
                 ${business.status === 'closed' ? 'Currently Closed' : 'Available Now'}
             </div>
+            <div class="business-profile-actions">
+                <button class="btn btn-like" aria-label="Like this business" data-business-id="${business.id}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="heart-icon">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <span class="like-count">${getLikeCount(business.id)}</span>
+                </button>
+            </div>
         </div>
         
         <div class="business-profile-content">
@@ -1596,6 +1613,91 @@ function setupTestimonialsScrolling() {
     });
     
     observer.observe(testimonialsTrack);
+}
+
+/**
+ * Like functionality
+ */
+function getLikeCount(businessId) {
+    const likes = JSON.parse(localStorage.getItem('businessLikes') || '{}');
+    return likes[businessId] || 0;
+}
+
+function isLiked(businessId) {
+    const likedBusinesses = JSON.parse(localStorage.getItem('likedBusinesses') || '[]');
+    return likedBusinesses.includes(businessId);
+}
+
+function toggleLike(businessId) {
+    const likedBusinesses = JSON.parse(localStorage.getItem('likedBusinesses') || '[]');
+    const likes = JSON.parse(localStorage.getItem('businessLikes') || '{}');
+    
+    const isCurrentlyLiked = likedBusinesses.includes(businessId);
+    
+    if (isCurrentlyLiked) {
+        // Unlike
+        const newLikedBusinesses = likedBusinesses.filter(id => id !== businessId);
+        localStorage.setItem('likedBusinesses', JSON.stringify(newLikedBusinesses));
+        likes[businessId] = Math.max(0, (likes[businessId] || 0) - 1);
+    } else {
+        // Like
+        likedBusinesses.push(businessId);
+        localStorage.setItem('likedBusinesses', JSON.stringify(likedBusinesses));
+        likes[businessId] = (likes[businessId] || 0) + 1;
+    }
+    
+    localStorage.setItem('businessLikes', JSON.stringify(likes));
+    return !isCurrentlyLiked;
+}
+
+function setupLikeButtons() {
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-like')) {
+            const button = e.target.closest('.btn-like');
+            const businessId = button.dataset.businessId;
+            const heartIcon = button.querySelector('.heart-icon');
+            const likeCount = button.querySelector('.like-count');
+            
+            const isNowLiked = toggleLike(businessId);
+            
+            // Update UI
+            if (isNowLiked) {
+                heartIcon.style.fill = '#e91e63';
+                heartIcon.style.transform = 'scale(1.2)';
+                button.classList.add('liked');
+            } else {
+                heartIcon.style.fill = 'currentColor';
+                heartIcon.style.transform = 'scale(1)';
+                button.classList.remove('liked');
+            }
+            
+            // Update count
+            likeCount.textContent = getLikeCount(businessId);
+            
+            // Reset animation
+            setTimeout(() => {
+                heartIcon.style.transform = 'scale(1)';
+            }, 200);
+        }
+    });
+}
+
+function updateLikeButtons() {
+    document.querySelectorAll('.btn-like').forEach(button => {
+        const businessId = button.dataset.businessId;
+        const heartIcon = button.querySelector('.heart-icon');
+        const likeCount = button.querySelector('.like-count');
+        
+        if (isLiked(businessId)) {
+            heartIcon.style.fill = '#e91e63';
+            button.classList.add('liked');
+        } else {
+            heartIcon.style.fill = 'currentColor';
+            button.classList.remove('liked');
+        }
+        
+        likeCount.textContent = getLikeCount(businessId);
+    });
 }
 
 /**
