@@ -718,6 +718,86 @@
     <!-- Toast Notifications -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- AI Assistant Button -->
+    <div class="ai-assistant-btn" id="aiAssistantBtn" aria-label="Open AI Assistant">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16Z"/>
+            <circle cx="8" cy="10" r="1"/>
+            <circle cx="12" cy="10" r="1"/>
+            <circle cx="16" cy="10" r="1"/>
+            <path d="M8 13H16V14H8V13Z"/>
+        </svg>
+        <span class="ai-pulse"></span>
+    </div>
+
+    <!-- AI Chat Modal -->
+    <div class="ai-chat-modal" id="aiChatModal" role="dialog" aria-labelledby="aiModalTitle" aria-hidden="true">
+        <div class="ai-chat-container">
+            <div class="ai-chat-header">
+                <div class="ai-avatar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16Z"/>
+                        <circle cx="8" cy="10" r="1"/>
+                        <circle cx="12" cy="10" r="1"/>
+                        <circle cx="16" cy="10" r="1"/>
+                        <path d="M8 13H16V14H8V13Z"/>
+                    </svg>
+                </div>
+                <div class="ai-header-info">
+                    <h3 id="aiModalTitle">AI Assistant</h3>
+                    <span class="ai-status">Online • Mock Version</span>
+                </div>
+                <button class="ai-close-btn" id="aiCloseBtn" aria-label="Close AI Assistant">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="ai-chat-messages" id="aiChatMessages">
+                <div class="ai-message">
+                    <div class="ai-avatar-small">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16Z"/>
+                            <circle cx="8" cy="10" r="1"/>
+                            <circle cx="12" cy="10" r="1"/>
+                            <circle cx="16" cy="10" r="1"/>
+                            <path d="M8 13H16V14H8V13Z"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <p>Hi! I'm your AI assistant for Student Hustle Hub. I can help you with common questions about our platform. <strong>Note: This is a mock version - the full AI is coming soon!</strong></p>
+                        <div class="quick-questions">
+                            <h4>Quick Questions:</h4>
+                            <div class="question-chips">
+                                <button class="question-chip" data-question="how-to-submit">How do I submit my business?</button>
+                                <button class="question-chip" data-question="categories">What categories are available?</button>
+                                <button class="question-chip" data-question="contact">How do I contact businesses?</button>
+                                <button class="question-chip" data-question="pricing">Is it free to list?</button>
+                                <button class="question-chip" data-question="offline">Can I use this offline?</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ai-chat-input-container">
+                <div class="ai-coming-soon-notice">
+                    <span class="coming-soon-badge">Full AI Coming Soon</span>
+                    <p>This is a preview version with mock responses. The full AI assistant will have real-time answers and advanced features!</p>
+                </div>
+                <div class="ai-chat-input">
+                    <input type="text" id="aiChatInput" placeholder="Ask me anything about Student Hustle Hub..." disabled>
+                    <button class="ai-send-btn" id="aiSendBtn" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
     <script>
         // Enhanced PWA Service Worker Registration

@@ -233,6 +233,9 @@ function setupEventListeners() {
     // Testimonials scrolling functionality
     setupTestimonialsScrolling();
     
+    // AI Assistant functionality
+    setupAIAssistant();
+    
     
     // Tag dropdown functionality
     const tagsSelect = document.getElementById('tags');
@@ -471,9 +474,6 @@ function renderListings() {
  */
 function createBusinessCard(listing) {
     const imageSrc = listing.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjlGQUZCIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjRTVFN0VCIi8+CjxwYXRoIGQ9Ik0xMzUgODVIMTY1VjExNUgxMzVWODVaIiBmaWxsPSIjMTA5OTgxIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNkI3MjgwIiBmb250LWZhbWlseT0ic3lzdGVtLXVpIiBmb250LXNpemU9IjE0Ij5CdXNpbmVzcyBJbWFnZTwvdGV4dD4KPC9zdmc+';
-    
-    // Debug log to check location data
-    console.log('Creating card for:', listing.name, 'Location:', listing.location);
     
     return `
         <article class="business-card" data-id="${listing.id}">
@@ -1598,6 +1598,224 @@ function setupTestimonialsScrolling() {
     observer.observe(testimonialsTrack);
 }
 
+/**
+ * AI Assistant functionality
+ */
+function setupAIAssistant() {
+    const aiBtn = document.getElementById('aiAssistantBtn');
+    const aiModal = document.getElementById('aiChatModal');
+    const aiCloseBtn = document.getElementById('aiCloseBtn');
+    const aiChatMessages = document.getElementById('aiChatMessages');
+    const questionChips = document.querySelectorAll('.question-chip');
+    
+    if (!aiBtn || !aiModal) return;
+    
+    // Mock responses for common questions
+    const mockResponses = {
+        'how-to-submit': {
+            title: 'How to Submit Your Business',
+            content: `To submit your business to Student Hustle Hub:
+
+1. Click "Submit for Listing" button on the homepage
+2. Fill out the form with your business details:
+   Business name and description
+   Category (Services, Goods, Food, etc.)
+   Contact information (WhatsApp, Phone, or Email)
+   Location (optional but helpful)
+   Upload a business image
+
+3. Submit the form - it's completely free
+
+4. Your listing will be reviewed and appear on the platform within 24 hours
+
+Pro tip: Add a clear description and good photos to attract more customers`
+        },
+        'categories': {
+            title: 'Available Categories',
+            content: `We support various business categories:
+
+Services:
+Tutoring and Academic help
+Graphic Design and Web Development
+Photography and Videography
+Beauty and Personal care
+Fitness and Wellness
+
+Goods:
+Handmade crafts and Jewelry
+Clothing and Fashion
+Electronics and Gadgets
+Books and Study materials
+Art and Decorations
+
+Food:
+Homemade meals and Snacks
+Baked goods and Desserts
+Beverages and Drinks
+Meal prep services
+
+Tutoring:
+Academic subjects
+Language learning
+Test preparation
+Skill development
+
+Choose the category that best fits your business`
+        },
+        'contact': {
+            title: 'How to Contact Businesses',
+            content: `Contacting businesses is easy:
+
+WhatsApp (Recommended):
+Click the WhatsApp button on any business card
+Opens directly in WhatsApp with pre-filled message
+Fastest way to get responses
+
+Phone:
+Click the phone number to call directly
+Great for urgent inquiries
+
+Email:
+Click the email address to open your email app
+Good for detailed questions or proposals
+
+Tips for better responses:
+Be polite and professional
+Mention you found them on Student Hustle Hub
+Ask specific questions about their services
+Include your budget if relevant
+
+Remember: Always verify the business details before making payments`
+        },
+        'pricing': {
+            title: 'Pricing Information',
+            content: `It's Completely FREE
+
+For Students:
+List your business for FREE
+No monthly fees or hidden costs
+No commission on sales
+Keep 100% of your earnings
+
+What's included:
+Professional business profile
+Contact information display
+Category listing
+Search visibility
+Mobile-friendly design
+
+Future Premium Features (Coming Soon):
+Featured listings
+Business analytics
+In-app messaging
+Advanced targeting
+
+Our Mission: Supporting student entrepreneurship without financial barriers
+
+Note: We may introduce optional premium features in the future, but basic listing will always remain free`
+        },
+        'offline': {
+            title: 'Offline Usage',
+            content: `Yes! You can use Student Hustle Hub offline
+
+What works offline:
+Browse cached business listings
+View business profiles
+Access contact information
+Read business descriptions
+Use the search function (cached results)
+
+What requires internet:
+Submit new businesses
+Real-time updates
+Contact businesses (WhatsApp/Phone/Email)
+
+How it works:
+The app automatically caches content when you're online
+Essential pages are available offline
+You'll see an "offline" indicator when disconnected
+Content syncs when you're back online
+
+Pro tip: Browse businesses while online to cache them for offline use
+
+This is a Progressive Web App (PWA) - you can even install it on your phone like a native app`
+        }
+    };
+    
+    // Open AI modal
+    aiBtn.addEventListener('click', () => {
+        aiModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+    
+    // Close AI modal
+    aiCloseBtn.addEventListener('click', closeAIModal);
+    aiModal.addEventListener('click', (e) => {
+        if (e.target === aiModal) {
+            closeAIModal();
+        }
+    });
+    
+    // Handle question chips
+    questionChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const question = chip.dataset.question;
+            if (mockResponses[question]) {
+                addAIResponse(mockResponses[question]);
+            }
+        });
+    });
+    
+    function closeAIModal() {
+        aiModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    function addAIResponse(response) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'ai-message';
+        messageDiv.innerHTML = `
+            <div class="ai-avatar-small">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16Z"/>
+                    <circle cx="8" cy="10" r="1"/>
+                    <circle cx="12" cy="10" r="1"/>
+                    <circle cx="16" cy="10" r="1"/>
+                    <path d="M8 13H16V14H8V13Z"/>
+                </svg>
+            </div>
+            <div class="message-content">
+                <h4 style="margin: 0 0 8px 0; color: #0F3D3E; font-size: 1rem;">${response.title}</h4>
+                <p style="white-space: pre-line; margin: 0;">${response.content}</p>
+                <div style="margin-top: 12px; padding: 8px; background: #f0f9ff; border-radius: 6px; border-left: 3px solid #0F3D3E;">
+                    <small style="color: #0369a1; font-style: italic;">This is a mock response. The full AI will provide real-time, personalized answers!</small>
+                </div>
+            </div>
+        `;
+        
+        aiChatMessages.appendChild(messageDiv);
+        aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+        
+        // Add typing effect
+        setTimeout(() => {
+            messageDiv.style.opacity = '0';
+            messageDiv.style.transform = 'translateY(10px)';
+            messageDiv.style.transition = 'all 0.3s ease';
+            
+            setTimeout(() => {
+                messageDiv.style.opacity = '1';
+                messageDiv.style.transform = 'translateY(0)';
+            }, 50);
+        }, 100);
+    }
+    
+    // Handle escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && aiModal.classList.contains('active')) {
+            closeAIModal();
+        }
+    });
+}
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
