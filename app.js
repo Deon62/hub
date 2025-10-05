@@ -508,6 +508,11 @@ function createBusinessCard(listing) {
                             </svg>
                             <span class="like-count">${getLikeCount(listing.id)}</span>
                         </button>
+                        <button class="btn btn-share" aria-label="Share this business" data-business-id="${listing.id}" data-business-name="${escapeHtml(listing.name)}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="share-icon">
+                                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                            </svg>
+                        </button>
                     ${listing.contactMethod === 'whatsapp' ? 
                         `<button class="btn btn-whatsapp" aria-label="Contact via WhatsApp">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -1460,6 +1465,11 @@ function renderBusinessProfile() {
                     </svg>
                     <span class="like-count">${getLikeCount(business.id)}</span>
                 </button>
+                <button class="btn btn-share" aria-label="Share this business" data-business-id="${business.id}" data-business-name="${escapeHtml(business.name)}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="share-icon">
+                        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                    </svg>
+                </button>
             </div>
         </div>
         
@@ -1711,6 +1721,15 @@ function setupLikeButtons() {
                 heartIcon.style.transform = 'scale(1)';
             }, 200);
         }
+        
+        // Handle share button clicks
+        if (e.target.closest('.btn-share')) {
+            const button = e.target.closest('.btn-share');
+            const businessId = button.dataset.businessId;
+            const businessName = button.dataset.businessName;
+            
+            shareBusiness(businessId, businessName);
+        }
     });
 }
 
@@ -1729,6 +1748,126 @@ function updateLikeButtons() {
         }
         
         likeCount.textContent = getLikeCount(businessId);
+    });
+}
+
+/**
+ * Share business functionality
+ */
+function shareBusiness(businessId, businessName) {
+    const business = listings.find(listing => listing.id === businessId);
+    if (!business) return;
+    
+    // Create share URL
+    const shareUrl = `${window.location.origin}/business-profile.html?id=${businessId}`;
+    
+    // Create share text
+    const shareText = `Check out this amazing student business: ${businessName} on Student Hustle Hub! 🚀\n\n${shareUrl}`;
+    
+    // Check if Web Share API is supported
+    if (navigator.share) {
+        // Use native Web Share API
+        navigator.share({
+            title: `${businessName} - Student Hustle Hub`,
+            text: shareText,
+            url: shareUrl
+        }).then(() => {
+            console.log('Business shared successfully');
+            showToast('Business shared successfully!', 'success');
+        }).catch((error) => {
+            console.log('Error sharing:', error);
+            // Fallback to copy to clipboard
+            fallbackShare(shareText, shareUrl);
+        });
+    } else {
+        // Fallback to copy to clipboard
+        fallbackShare(shareText, shareUrl);
+    }
+}
+
+function fallbackShare(shareText, shareUrl) {
+    // Try to copy to clipboard
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareText).then(() => {
+            showToast('Business link copied to clipboard!', 'success');
+        }).catch(() => {
+            // Final fallback - show share modal
+            showShareModal(shareText, shareUrl);
+        });
+    } else {
+        // Final fallback - show share modal
+        showShareModal(shareText, shareUrl);
+    }
+}
+
+function showShareModal(shareText, shareUrl) {
+    // Create share modal
+    const modal = document.createElement('div');
+    modal.className = 'share-modal-overlay';
+    modal.innerHTML = `
+        <div class="share-modal">
+            <div class="share-modal-header">
+                <h3>Share Business</h3>
+                <button class="share-modal-close" aria-label="Close share modal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="share-modal-content">
+                <p>Copy this link to share with your colleagues:</p>
+                <div class="share-url-container">
+                    <input type="text" value="${shareUrl}" readonly class="share-url-input" id="shareUrlInput">
+                    <button class="btn btn-primary" id="copyShareUrl">Copy Link</button>
+                </div>
+                <div class="share-social">
+                    <p>Or share on social media:</p>
+                    <div class="share-social-buttons">
+                        <a href="https://wa.me/?text=${encodeURIComponent(shareText)}" target="_blank" class="btn btn-whatsapp">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                            </svg>
+                            WhatsApp
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}" target="_blank" class="btn btn-twitter">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                            Twitter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+    
+    // Add event listeners
+    modal.querySelector('.share-modal-close').addEventListener('click', () => {
+        document.body.removeChild(modal);
+        document.body.style.overflow = '';
+    });
+    
+    modal.querySelector('.share-modal-overlay').addEventListener('click', (e) => {
+        if (e.target === modal) {
+            document.body.removeChild(modal);
+            document.body.style.overflow = '';
+        }
+    });
+    
+    modal.querySelector('#copyShareUrl').addEventListener('click', () => {
+        const input = modal.querySelector('#shareUrlInput');
+        input.select();
+        input.setSelectionRange(0, 99999);
+        
+        try {
+            document.execCommand('copy');
+            showToast('Link copied to clipboard!', 'success');
+        } catch (err) {
+            showToast('Failed to copy link', 'error');
+        }
     });
 }
 

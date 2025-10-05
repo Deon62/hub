@@ -1976,6 +1976,194 @@ button[type="submit"]:disabled::after {
     100% { transform: scale(1); }
 }
 
+/* Share Button Styles */
+.btn-share {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    min-width: 36px;
+    height: 36px;
+}
+
+.btn-share:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+    transform: translateY(-1px);
+    color: #0F3D3E;
+}
+
+.btn-share:active {
+    transform: translateY(0);
+}
+
+.share-icon {
+    transition: all 0.2s ease;
+    fill: currentColor;
+}
+
+.btn-share:hover .share-icon {
+    transform: scale(1.1);
+}
+
+.btn-share:active .share-icon {
+    transform: scale(0.95);
+}
+
+/* Share Modal Styles */
+.share-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.share-modal {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.share-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.share-modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.share-modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    color: #6b7280;
+    transition: all 0.2s ease;
+}
+
+.share-modal-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.share-modal-content {
+    padding: 24px;
+}
+
+.share-modal-content p {
+    margin: 0 0 16px 0;
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+.share-url-container {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.share-url-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: #f9fafb;
+    color: #374151;
+}
+
+.share-url-input:focus {
+    outline: none;
+    border-color: #0F3D3E;
+    box-shadow: 0 0 0 3px rgba(15, 61, 62, 0.1);
+}
+
+.share-social {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 20px;
+}
+
+.share-social p {
+    margin: 0 0 16px 0;
+    font-weight: 500;
+    color: #374151;
+}
+
+.share-social-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-twitter {
+    background: #1da1f2;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-twitter:hover {
+    background: #0d8bd9;
+    transform: translateY(-1px);
+}
+
+/* Mobile Responsiveness for Share Modal */
+@media (max-width: 640px) {
+    .share-modal {
+        margin: 20px;
+        max-width: none;
+    }
+    
+    .share-url-container {
+        flex-direction: column;
+    }
+    
+    .share-social-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-twitter,
+    .btn-whatsapp {
+        justify-content: center;
+    }
+}
+
 /* AI Assistant Styles */
 .ai-assistant-btn {
     position: fixed;
