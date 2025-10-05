@@ -34,7 +34,7 @@ const sampleListings = [
         contactMethod: 'whatsapp',
         contactInfo: '+254702248984',
         instagram: 'https://instagram.com/deon_tech_solutions',
-        location: 'Remote & On-campus',
+        location: 'Main Campus, Dorm 5',
         tags: ['budget', 'discount'],
         image: 'profiles/deon.jpg',
         rating: 4.9,
@@ -51,7 +51,7 @@ const sampleListings = [
         contactMethod: 'email',
         contactInfo: '625deon@gmail.com',
         instagram: 'https://instagram.com/deon_graphics',
-        location: 'Remote & On-campus',
+        location: 'Student Center, Room 12',
         tags: ['budget', 'discount'],
         image: 'profiles/deon1.jpg',
         rating: 4.7,
@@ -85,7 +85,7 @@ const sampleListings = [
         contactMethod: 'email',
         contactInfo: 'orinadeon@gmail.com',
         instagram: 'https://instagram.com/deon_digital',
-        location: 'Remote & On-campus',
+        location: 'Library, Ground Floor',
         tags: ['budget', 'discount'],
         image: 'profiles/deon3.jpg',
         rating: 4.6,
@@ -102,7 +102,7 @@ const sampleListings = [
         contactMethod: 'email',
         contactInfo: 'pinakleorgltd@gmail.com',
         instagram: 'https://instagram.com/pinakle_consulting',
-        location: 'Remote & On-campus',
+        location: 'Cafeteria, Table 8',
         tags: ['discount', 'budget'],
         image: 'profiles/deon4.jpg',
         rating: 4.9,
@@ -472,6 +472,9 @@ function renderListings() {
 function createBusinessCard(listing) {
     const imageSrc = listing.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjlGQUZCIi8+CjxwYXRoIGQ9Ik0xMjUgNzVIMTc1VjEyNUgxMjVWNzVaIiBmaWxsPSIjRTVFN0VCIi8+CjxwYXRoIGQ9Ik0xMzUgODVIMTY1VjExNUgxMzVWODVaIiBmaWxsPSIjMTA5OTgxIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNkI3MjgwIiBmb250LWZhbWlseT0ic3lzdGVtLXVpIiBmb250LXNpemU9IjE0Ij5CdXNpbmVzcyBJbWFnZTwvdGV4dD4KPC9zdmc+';
     
+    // Debug log to check location data
+    console.log('Creating card for:', listing.name, 'Location:', listing.location);
+    
     return `
         <article class="business-card" data-id="${listing.id}">
             <div class="business-content">
@@ -481,6 +484,14 @@ function createBusinessCard(listing) {
                         <h3 class="business-name">${escapeHtml(listing.name)}</h3>
                         <span class="category-badge">${listing.category}</span>
                     </div>
+                    ${listing.location ? `
+                        <div class="business-location">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            <span>${escapeHtml(listing.location)}</span>
+                        </div>
+                    ` : ''}
                     <div class="business-status ${listing.status || 'available'}">${(listing.status || 'available') === 'available' ? 'Available' : 'Closed'}</div>
                     <p class="business-description">${escapeHtml(listing.description)}</p>
                     <div class="business-rating">
@@ -1417,6 +1428,14 @@ function renderBusinessProfile() {
                  alt="${business.name}" class="business-profile-image">
             <h1 class="business-profile-name">${business.name}</h1>
             <p class="business-profile-category">${business.category}</p>
+            ${business.location ? `
+                <div class="business-profile-location">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    <span>${escapeHtml(business.location)}</span>
+                </div>
+            ` : ''}
             <div class="business-profile-status ${business.status || 'available'}">
                 ${business.status === 'closed' ? 'Currently Closed' : 'Available Now'}
             </div>

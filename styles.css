@@ -1161,6 +1161,23 @@ a:hover {
     margin-bottom: var(--space-2);
 }
 
+.business-location {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-bottom: var(--space-2);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    opacity: 1;
+    font-weight: 500;
+}
+
+.business-location svg {
+    flex-shrink: 0;
+    opacity: 1;
+    color: var(--primary);
+}
+
 .business-name {
     font-size: var(--font-size-lg);
     font-weight: 600;
@@ -2755,6 +2772,21 @@ textarea:focus {
     font-weight: 500;
     opacity: 0.9;
     margin-bottom: var(--space-2);
+}
+
+.business-profile-location {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-sm);
+    opacity: 0.9;
+}
+
+.business-profile-location svg {
+    flex-shrink: 0;
+    opacity: 0.8;
 }
 
 .business-profile-status {
