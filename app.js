@@ -2221,6 +2221,9 @@ function applyUpdate() {
         // Record that user applied update
         localStorage.setItem('lastUpdatePrompt', Date.now().toString());
         
+        // Clear old cache to ensure fresh content
+        clearOldCache();
+        
         // Tell the waiting service worker to skip waiting and become active
         swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
         
@@ -2257,11 +2260,39 @@ function dismissUpdate() {
     }, 5000); // Wait 5 seconds then update silently
 }
 
+// Clear old cache to ensure fresh content
+async function clearOldCache() {
+    try {
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            const oldCaches = cacheNames.filter(name => 
+                name.includes('student-hustle-hub') && 
+                !name.includes('v7') // Keep only current version
+            );
+            
+            // Delete old caches
+            await Promise.all(oldCaches.map(name => caches.delete(name)));
+            console.log('Old caches cleared:', oldCaches);
+        }
+        
+        // Clear localStorage cache markers
+        localStorage.removeItem('lastUpdatePrompt');
+        localStorage.removeItem('appStartTime');
+        
+        console.log('Cache cleared for fresh update');
+    } catch (error) {
+        console.log('Cache clearing failed:', error);
+    }
+}
+
 // Handle silent updates
 function handleSilentUpdate() {
     if (updateAvailable && swRegistration && swRegistration.waiting && !isUpdating) {
         isUpdating = true;
         lastUpdateTime = Date.now();
+        
+        // Clear old cache to ensure fresh content
+        clearOldCache();
         
         // Tell the waiting service worker to skip waiting and become active
         swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });

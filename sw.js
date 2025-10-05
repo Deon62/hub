@@ -67,6 +67,9 @@ self.addEventListener('activate', event => {
             // Take control of all clients immediately
             return self.clients.claim();
         }).then(() => {
+            // Clear old caches aggressively for mobile
+            return clearOldCachesAggressively();
+        }).then(() => {
             // Notify clients that the service worker is ready
             return self.clients.matchAll().then(clients => {
                 clients.forEach(client => {
@@ -242,6 +245,32 @@ self.addEventListener('notificationclick', event => {
         );
     }
 });
+
+// Aggressive cache clearing for mobile devices
+async function clearOldCachesAggressively() {
+    try {
+        const cacheNames = await caches.keys();
+        const oldCaches = cacheNames.filter(name => 
+            name.includes('student-hustle-hub') && 
+            !name.includes('v7') // Keep only current version
+        );
+        
+        // Delete old caches
+        await Promise.all(oldCaches.map(name => caches.delete(name)));
+        console.log('[SW] Aggressively cleared old caches:', oldCaches);
+        
+        // Also clear any caches with old version numbers
+        const versionCaches = cacheNames.filter(name => 
+            name.includes('v6') || name.includes('v5') || name.includes('v4')
+        );
+        
+        await Promise.all(versionCaches.map(name => caches.delete(name)));
+        console.log('[SW] Cleared version caches:', versionCaches);
+        
+    } catch (error) {
+        console.log('[SW] Aggressive cache clearing failed:', error);
+    }
+}
 
 // Background update checking
 function startBackgroundUpdateCheck() {
