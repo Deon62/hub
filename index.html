@@ -28,9 +28,9 @@
     <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-192x192.png">
     
     <!-- Stylesheets and Preloads -->
-    <link rel="stylesheet" href="styles.css?v=4">
-    <link rel="preload" href="styles.css?v=4" as="style">
-    <link rel="preload" href="app.js?v=4" as="script">
+    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="preload" href="styles.css?v=5" as="style">
+    <link rel="preload" href="app.js?v=5" as="script">
     <link rel="preload" href="profiles/deon.jpg" as="image">
     <link rel="preload" href="profiles/deon1.jpg" as="image">
     <link rel="preload" href="profiles/deon2.jpg" as="image">
@@ -801,12 +801,12 @@
         </div>
     </div>
 
-    <script src="app.js?v=4"></script>
+    <script src="app.js?v=5"></script>
     <script>
         // Enhanced PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js?v=4')
+                navigator.serviceWorker.register('/sw.js?v=5')
                     .then(registration => {
                         console.log('✅ Service Worker registered successfully:', registration);
                         

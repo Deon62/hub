@@ -1,14 +1,14 @@
 // Service Worker for Student Hustle Hub - Enhanced PWA Support
-const CACHE_NAME = 'student-hustle-hub-v4';
-const STATIC_CACHE = 'static-cache-v4';
-const DYNAMIC_CACHE = 'dynamic-cache-v4';
+const CACHE_NAME = 'student-hustle-hub-v5';
+const STATIC_CACHE = 'static-cache-v5';
+const DYNAMIC_CACHE = 'dynamic-cache-v5';
 
 // Essential assets to cache immediately
 const urlsToCache = [
     '/',
     '/index.html',
-    '/styles.css?v=4',
-    '/app.js?v=4',
+    '/styles.css?v=5',
+    '/app.js?v=5',
     '/manifest.json',
     '/offline.html',
     '/assets/logo.png',
