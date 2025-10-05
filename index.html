@@ -5,6 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Hustle Hub - Find & Share Student Businesses</title>
     <meta name="description" content="Discover and share student-run businesses, services, and side hustles on campus">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#0F3D3E">
+    <meta name="msapplication-TileColor" content="#0F3D3E">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="HustleHub">
+    
+    <!-- Icons for different platforms -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-192x192.png">
+    
+    <!-- Stylesheets and Preloads -->
     <link rel="stylesheet" href="styles.css">
     <link rel="preload" href="styles.css" as="style">
     <link rel="preload" href="app.js" as="script">
@@ -700,19 +720,143 @@
 
     <script src="app.js"></script>
     <script>
-        // Register Service Worker for caching
+        // Enhanced PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
                     .then(registration => {
-                        console.log('SW registered: ', registration);
+                        console.log('✅ Service Worker registered successfully:', registration);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New content is available, show update notification
+                                    showUpdateNotification();
+                                }
+                            });
+                        });
+                        
+                        // Handle service worker messages
+                        navigator.serviceWorker.addEventListener('message', event => {
+                            if (event.data && event.data.type === 'CACHE_UPDATED') {
+                                console.log('📦 Cache updated:', event.data.payload);
+                            }
+                        });
                     })
                     .catch(registrationError => {
-                        console.log('SW registration failed: ', registrationError);
+                        console.error('❌ Service Worker registration failed:', registrationError);
                     });
             });
         }
         
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('💾 PWA install prompt triggered');
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallButton();
+        });
+        
+        // Handle PWA installation
+        function showInstallButton() {
+            // Create install button if it doesn't exist
+            if (!document.getElementById('pwa-install-btn')) {
+                const installBtn = document.createElement('button');
+                installBtn.id = 'pwa-install-btn';
+                installBtn.innerHTML = '📱 Install App';
+                installBtn.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: #0F3D3E;
+                    color: white;
+                    border: none;
+                    padding: 12px 20px;
+                    border-radius: 25px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(15, 61, 62, 0.3);
+                    z-index: 1000;
+                    transition: all 0.3s ease;
+                `;
+                
+                installBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log(`PWA install ${outcome}`);
+                        deferredPrompt = null;
+                        installBtn.remove();
+                    }
+                });
+                
+                installBtn.addEventListener('mouseenter', () => {
+                    installBtn.style.transform = 'translateY(-2px)';
+                    installBtn.style.boxShadow = '0 6px 16px rgba(15, 61, 62, 0.4)';
+                });
+                
+                installBtn.addEventListener('mouseleave', () => {
+                    installBtn.style.transform = 'translateY(0)';
+                    installBtn.style.boxShadow = '0 4px 12px rgba(15, 61, 62, 0.3)';
+                });
+                
+                document.body.appendChild(installBtn);
+            }
+        }
+        
+        // Handle PWA installation success
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('🎉 PWA was installed successfully');
+            const installBtn = document.getElementById('pwa-install-btn');
+            if (installBtn) {
+                installBtn.remove();
+            }
+        });
+        
+        // Show update notification
+        function showUpdateNotification() {
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #0F3D3E;
+                    color: white;
+                    padding: 16px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    z-index: 1001;
+                    max-width: 300px;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                ">
+                    <div style="font-weight: 600; margin-bottom: 8px;">🔄 Update Available</div>
+                    <div style="font-size: 14px; margin-bottom: 12px;">A new version is ready!</div>
+                    <button onclick="this.parentElement.parentElement.remove(); window.location.reload();" style="
+                        background: rgba(255,255,255,0.2);
+                        border: 1px solid rgba(255,255,255,0.3);
+                        color: white;
+                        padding: 6px 12px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        font-size: 12px;
+                    ">Update Now</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+        }
+        
+        // Check if app is running in standalone mode (installed)
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            console.log('📱 App is running in standalone mode');
+            document.body.classList.add('standalone-mode');
+        }
+        
+        // Analytics
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>

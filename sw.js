@@ -1,49 +1,205 @@
-// Service Worker for Student Hustle Hub
+// Service Worker for Student Hustle Hub - Enhanced PWA Support
 const CACHE_NAME = 'student-hustle-hub-v1';
+const STATIC_CACHE = 'static-cache-v1';
+const DYNAMIC_CACHE = 'dynamic-cache-v1';
+
+// Essential assets to cache immediately
 const urlsToCache = [
     '/',
     '/index.html',
     '/styles.css',
     '/app.js',
+    '/manifest.json',
+    '/offline.html',
+    '/assets/logo.png',
     '/profiles/deon.jpg',
     '/profiles/deon1.jpg',
     '/profiles/deon2.jpg',
     '/profiles/deon3.jpg',
-    '/profiles/deon4.jpg'
+    '/profiles/deon4.jpg',
+    '/businesses.html',
+    '/pricing.html',
+    '/profile.html',
+    '/dashboard.html',
+    '/messages.html',
+    '/business-profile.html'
 ];
 
-// Install event
+// Install event - Cache essential assets
 self.addEventListener('install', event => {
+    console.log('[SW] Installing service worker...');
+    
     event.waitUntil(
-        caches.open(CACHE_NAME)
+        caches.open(STATIC_CACHE)
             .then(cache => {
+                console.log('[SW] Caching essential assets...');
                 return cache.addAll(urlsToCache);
             })
-    );
-});
-
-// Fetch event
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                // Return cached version or fetch from network
-                return response || fetch(event.request);
+            .then(() => {
+                console.log('[SW] Essential assets cached successfully');
+                // Force activation of new service worker
+                return self.skipWaiting();
+            })
+            .catch(error => {
+                console.error('[SW] Failed to cache essential assets:', error);
             })
     );
 });
 
-// Activate event
+// Activate event - Clean up old caches
 self.addEventListener('activate', event => {
+    console.log('[SW] Activating service worker...');
+    
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
+                    if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+                        console.log('[SW] Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
             );
+        }).then(() => {
+            console.log('[SW] Service worker activated successfully');
+            // Take control of all clients immediately
+            return self.clients.claim();
         })
     );
+});
+
+// Fetch event - Enhanced caching strategy
+self.addEventListener('fetch', event => {
+    const request = event.request;
+    const url = new URL(request.url);
+    
+    // Skip non-GET requests
+    if (request.method !== 'GET') {
+        return;
+    }
+    
+    // Skip chrome-extension and other non-http requests
+    if (!request.url.startsWith('http')) {
+        return;
+    }
+    
+    console.log('[SW] Fetching:', request.url);
+    
+    event.respondWith(
+        caches.match(request)
+            .then(response => {
+                // Return cached version if available
+                if (response) {
+                    console.log('[SW] Serving from cache:', request.url);
+                    return response;
+                }
+                
+                // Try to fetch from network
+                return fetch(request)
+                    .then(fetchResponse => {
+                        // Check if response is valid
+                        if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+                            return fetchResponse;
+                        }
+                        
+                        // Clone the response
+                        const responseToCache = fetchResponse.clone();
+                        
+                        // Cache dynamic content
+                        caches.open(DYNAMIC_CACHE)
+                            .then(cache => {
+                                console.log('[SW] Caching dynamic content:', request.url);
+                                cache.put(request, responseToCache);
+                            });
+                        
+                        return fetchResponse;
+                    })
+                    .catch(error => {
+                        console.log('[SW] Network request failed:', request.url, error);
+                        
+                        // Return offline fallback for navigation requests
+                        if (request.mode === 'navigate') {
+                            return caches.match('/offline.html');
+                        }
+                        
+                        // Return offline fallback for HTML pages
+                        if (request.headers.get('accept').includes('text/html')) {
+                            return caches.match('/offline.html');
+                        }
+                        
+                        // For other requests, you might want to return a default response
+                        throw error;
+                    });
+            })
+    );
+});
+
+// Handle background sync (if supported)
+self.addEventListener('sync', event => {
+    console.log('[SW] Background sync triggered:', event.tag);
+    
+    if (event.tag === 'background-sync') {
+        event.waitUntil(
+            // Handle any background sync tasks here
+            console.log('[SW] Processing background sync tasks...')
+        );
+    }
+});
+
+// Handle push notifications (if needed in future)
+self.addEventListener('push', event => {
+    console.log('[SW] Push notification received');
+    
+    const options = {
+        body: event.data ? event.data.text() : 'New update available!',
+        icon: '/icons/icon-192x192.png',
+        badge: '/icons/icon-72x72.png',
+        vibrate: [100, 50, 100],
+        data: {
+            dateOfArrival: Date.now(),
+            primaryKey: 1
+        },
+        actions: [
+            {
+                action: 'explore',
+                title: 'Explore',
+                icon: '/icons/icon-96x96.png'
+            },
+            {
+                action: 'close',
+                title: 'Close',
+                icon: '/icons/icon-96x96.png'
+            }
+        ]
+    };
+    
+    event.waitUntil(
+        self.registration.showNotification('Student Hustle Hub', options)
+    );
+});
+
+// Handle notification clicks
+self.addEventListener('notificationclick', event => {
+    console.log('[SW] Notification clicked:', event.action);
+    
+    event.notification.close();
+    
+    if (event.action === 'explore') {
+        event.waitUntil(
+            clients.openWindow('/')
+        );
+    }
+});
+
+// Message handling for communication with main thread
+self.addEventListener('message', event => {
+    console.log('[SW] Message received:', event.data);
+    
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+    
+    if (event.data && event.data.type === 'GET_VERSION') {
+        event.ports[0].postMessage({ version: CACHE_NAME });
+    }
 });
