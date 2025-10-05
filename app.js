@@ -77,15 +77,15 @@ const sampleListings = [
         createdAt: new Date().toISOString()
     },
     {
-        id: 'deon-digital-marketing',
-        name: "BMW's Digital Marketing",
-        category: 'services',
-        type: 'service',
-        description: 'BMW is a student-run business that sells BMW parts and accessories.we believe in the power of community and we are committed to providing the best products and services to our customers.',
-        contactMethod: 'email',
-        contactInfo: 'orinadeon@gmail.com',
+        id: 'kibs-digital-marketing',
+        name: "Kibs beauty and sensation",
+        category: 'goods',
+        type: 'good',
+        description: 'Kibs beauty, offers beauty products and perfume, make up products and some natural products like slimming teamy mission hear is to boost confidence on my clients and eradicate stigma as beauty is concerned.',
+        contactMethod: 'phone',
+        contactInfo: '0794518414',
         instagram: 'https://instagram.com/deon_digital',
-        location: 'Library, Ground Floor',
+        location: 'Njoro, Egerton,eldoret deliivery',
         tags: ['budget', 'discount'],
         image: 'profiles/deon3.jpg',
         rating: 4.6,
@@ -2090,5 +2090,74 @@ This is a Progressive Web App (PWA) - you can even install it on your phone like
     });
 }
 
+// Service Worker Update Management
+let swRegistration = null;
+let updateAvailable = false;
+
+// Initialize service worker
+async function initServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        try {
+            swRegistration = await navigator.serviceWorker.register('/sw.js');
+            console.log('Service Worker registered successfully');
+            
+            // Listen for service worker updates
+            swRegistration.addEventListener('updatefound', () => {
+                console.log('Service Worker update found');
+                const newWorker = swRegistration.installing;
+                
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        console.log('New service worker installed, updating silently');
+                        // Update silently without user notification
+                        updateAvailable = true;
+                        handleSilentUpdate();
+                    }
+                });
+            });
+            
+            // Listen for messages from service worker
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data.type === 'UPDATE_AVAILABLE') {
+                    console.log('Update available from service worker');
+                    updateAvailable = true;
+                    handleSilentUpdate();
+                }
+            });
+            
+            // Check for updates periodically
+            setInterval(checkForUpdates, 60000); // Check every minute
+            
+        } catch (error) {
+            console.error('Service Worker registration failed:', error);
+        }
+    }
+}
+
+// Check for updates manually
+async function checkForUpdates() {
+    if (swRegistration) {
+        try {
+            await swRegistration.update();
+        } catch (error) {
+            console.log('Update check failed:', error);
+        }
+    }
+}
+
+// Handle silent updates
+function handleSilentUpdate() {
+    if (updateAvailable && swRegistration && swRegistration.waiting) {
+        // Tell the waiting service worker to skip waiting and become active
+        swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        
+        // Reload the page to use the new service worker
+        window.location.reload();
+    }
+}
+
 // Initialize the application when DOM is loaded
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+    init();
+    initServiceWorker();
+});

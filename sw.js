@@ -1,15 +1,17 @@
 // Service Worker for Student Hustle Hub - Enhanced PWA Support
-const CACHE_NAME = 'student-hustle-hub-v5';
-const STATIC_CACHE = 'static-cache-v5';
-const DYNAMIC_CACHE = 'dynamic-cache-v5';
+const CACHE_NAME = 'student-hustle-hub-v6';
+const STATIC_CACHE = 'static-cache-v6';
+const DYNAMIC_CACHE = 'dynamic-cache-v6';
+const UPDATE_CHECK_INTERVAL = 30000; // Check for updates every 30 seconds
 
 // Essential assets to cache immediately
 const urlsToCache = [
     '/',
     '/index.html',
-    '/styles.css?v=5',
-    '/app.js?v=5',
+    '/styles.css?v=6',
+    '/app.js?v=6',
     '/manifest.json',
+    '/version.json',
     '/offline.html',
     '/assets/logo.png',
     '/profiles/deon.jpg',
@@ -37,7 +39,7 @@ self.addEventListener('install', event => {
             })
             .then(() => {
                 console.log('[SW] Essential assets cached successfully');
-                // Force activation of new service worker
+                // Force activation of new service worker immediately
                 return self.skipWaiting();
             })
             .catch(error => {
@@ -70,10 +72,13 @@ self.addEventListener('activate', event => {
                 clients.forEach(client => {
                     client.postMessage({
                         type: 'SW_READY',
-                        payload: { version: 'v4' }
+                        payload: { version: 'v6' }
                     });
                 });
             });
+        }).then(() => {
+            // Start background update checking
+            startBackgroundUpdateCheck();
         })
     );
 });
@@ -238,6 +243,105 @@ self.addEventListener('notificationclick', event => {
     }
 });
 
+// Background update checking
+function startBackgroundUpdateCheck() {
+    // Check for updates immediately
+    checkForUpdates();
+    
+    // Set up periodic update checking
+    setInterval(checkForUpdates, UPDATE_CHECK_INTERVAL);
+}
+
+async function checkForUpdates() {
+    try {
+        // Check if there's a new version available
+        const response = await fetch('/version.json?' + Date.now());
+        if (response.ok) {
+            const versionData = await response.json();
+            const currentVersion = await getCurrentVersion();
+            
+            // Compare versions
+            if (shouldUpdate(versionData, currentVersion)) {
+                console.log('[SW] Update available, updating cache silently');
+                await updateCacheSilently();
+            }
+        }
+    } catch (error) {
+        console.log('[SW] Update check failed:', error);
+    }
+}
+
+async function getCurrentVersion() {
+    try {
+        const cache = await caches.open(STATIC_CACHE);
+        const response = await cache.match('/version.json');
+        if (response) {
+            return await response.json();
+        }
+    } catch (error) {
+        console.log('[SW] Could not get current version:', error);
+    }
+    return { version: '1.0.0', timestamp: 0 };
+}
+
+function shouldUpdate(newVersion, currentVersion) {
+    // Compare version numbers and timestamps
+    if (newVersion.timestamp > currentVersion.timestamp) {
+        return true;
+    }
+    
+    // Compare semantic versions
+    const newVersionParts = newVersion.version.split('.').map(Number);
+    const currentVersionParts = currentVersion.version.split('.').map(Number);
+    
+    for (let i = 0; i < Math.max(newVersionParts.length, currentVersionParts.length); i++) {
+        const newPart = newVersionParts[i] || 0;
+        const currentPart = currentVersionParts[i] || 0;
+        
+        if (newPart > currentPart) {
+            return true;
+        } else if (newPart < currentPart) {
+            return false;
+        }
+    }
+    
+    return false;
+}
+
+async function updateCacheSilently() {
+    try {
+        // Open new cache
+        const newCache = await caches.open(STATIC_CACHE);
+        
+        // Cache all essential assets
+        await newCache.addAll(urlsToCache);
+        
+        // Clean up old caches
+        const cacheNames = await caches.keys();
+        await Promise.all(
+            cacheNames.map(cacheName => {
+                if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+                    return caches.delete(cacheName);
+                }
+            })
+        );
+        
+        console.log('[SW] Cache updated silently');
+        
+        // Notify clients about the update
+        const clients = await self.clients.matchAll();
+        clients.forEach(client => {
+            client.postMessage({
+                type: 'UPDATE_AVAILABLE',
+                payload: { version: CACHE_NAME }
+            });
+        });
+        
+    } catch (error) {
+        console.error('[SW] Silent update failed:', error);
+    }
+}
+
 // Message handling for communication with main thread
 self.addEventListener('message', event => {
     console.log('[SW] Message received:', event.data);
@@ -248,5 +352,9 @@ self.addEventListener('message', event => {
     
     if (event.data && event.data.type === 'GET_VERSION') {
         event.ports[0].postMessage({ version: CACHE_NAME });
+    }
+    
+    if (event.data && event.data.type === 'CHECK_UPDATE') {
+        checkForUpdates();
     }
 });
