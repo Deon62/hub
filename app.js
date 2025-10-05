@@ -2267,7 +2267,7 @@ async function clearOldCache() {
             const cacheNames = await caches.keys();
             const oldCaches = cacheNames.filter(name => 
                 name.includes('student-hustle-hub') && 
-                !name.includes('v9') // Keep only current version
+                !name.includes('v10-FORCE') // Keep only current version
             );
             
             // Delete old caches
@@ -2370,7 +2370,7 @@ async function aggressiveCacheClear() {
 // Check if we need to show update notification
 function checkForUpdateNotification() {
     const lastVersion = localStorage.getItem('lastVersion');
-    const currentVersion = 'v9';
+    const currentVersion = 'v10-FORCE';
     const lastUpdatePrompt = localStorage.getItem('lastUpdatePrompt');
     const now = Date.now();
     
@@ -2759,19 +2759,25 @@ async function handleManualRefresh() {
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Check for version change and force cache clear
+    // FORCE UPDATE: Check for version change and force cache clear
     const lastVersion = localStorage.getItem('lastVersion');
-    const currentVersion = 'v9';
+    const currentVersion = 'v10-FORCE';
     
-    if (lastVersion !== currentVersion) {
-        console.log('Version changed from', lastVersion, 'to', currentVersion);
-        console.log('Forcing aggressive cache clear...');
+    // Force update for hosted apps - clear cache on every visit for first 3 visits
+    const forceUpdateCount = parseInt(localStorage.getItem('forceUpdateCount') || '0');
+    
+    if (lastVersion !== currentVersion || forceUpdateCount < 3) {
+        console.log('FORCE UPDATE: Version changed from', lastVersion, 'to', currentVersion);
+        console.log('FORCE UPDATE: Clearing all caches aggressively...');
+        
+        // Increment force update count
+        localStorage.setItem('forceUpdateCount', (forceUpdateCount + 1).toString());
         
         // Perform aggressive cache clear
         aggressiveCacheClear().then(() => {
             // Set new version
             localStorage.setItem('lastVersion', currentVersion);
-            // Force reload
+            // Force reload with cache bypass
             window.location.reload(true);
         });
         return; // Stop execution here

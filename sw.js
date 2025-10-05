@@ -35,19 +35,24 @@ self.addEventListener('install', event => {
         // NUCLEAR OPTION: Clear ALL caches including service worker cache
         (async () => {
             try {
-                // Clear all existing caches
-                const cacheNames = await caches.keys();
-                console.log('[SW] Found caches to delete:', cacheNames);
+                // Clear all existing caches MULTIPLE TIMES
+                for (let i = 0; i < 3; i++) {
+                    const cacheNames = await caches.keys();
+                    console.log(`[SW] NUCLEAR ROUND ${i + 1}: Found caches to delete:`, cacheNames);
+                    
+                    await Promise.all(cacheNames.map(cacheName => {
+                        console.log('[SW] NUCLEAR: Deleting cache:', cacheName);
+                        return caches.delete(cacheName);
+                    }));
+                    
+                    // Wait between rounds
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
                 
-                await Promise.all(cacheNames.map(cacheName => {
-                    console.log('[SW] NUCLEAR: Deleting cache:', cacheName);
-                    return caches.delete(cacheName);
-                }));
+                console.log('[SW] NUCLEAR: All caches cleared (3 rounds)');
                 
-                console.log('[SW] NUCLEAR: All caches cleared');
-                
-                // Wait a moment to ensure deletion is complete
-                await new Promise(resolve => setTimeout(resolve, 100));
+                // Wait longer to ensure deletion is complete
+                await new Promise(resolve => setTimeout(resolve, 500));
                 
                 // Now cache new assets with fresh cache
                 const cache = await caches.open(STATIC_CACHE);
@@ -294,7 +299,7 @@ async function clearOldCachesAggressively() {
         
         // Also clear any caches with old version numbers
         const versionCaches = cacheNames.filter(name => 
-            name.includes('v8') || name.includes('v7') || name.includes('v6') || name.includes('v5') || name.includes('v4')
+            name.includes('v9') || name.includes('v8') || name.includes('v7') || name.includes('v6') || name.includes('v5') || name.includes('v4')
         );
         
         await Promise.all(versionCaches.map(name => caches.delete(name)));
