@@ -2267,7 +2267,7 @@ async function clearOldCache() {
             const cacheNames = await caches.keys();
             const oldCaches = cacheNames.filter(name => 
                 name.includes('student-hustle-hub') && 
-                !name.includes('v7') // Keep only current version
+                !name.includes('v9') // Keep only current version
             );
             
             // Delete old caches
@@ -2324,10 +2324,53 @@ async function forceCacheRefresh() {
     }
 }
 
+// Aggressive cache clearing for hosted apps
+async function aggressiveCacheClear() {
+    try {
+        console.log('Performing aggressive cache clear...');
+        
+        // Clear all caches
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            console.log('Found caches:', cacheNames);
+            
+            // Delete ALL caches
+            await Promise.all(cacheNames.map(cacheName => {
+                console.log('Deleting cache:', cacheName);
+                return caches.delete(cacheName);
+            }));
+            
+            console.log('All caches cleared');
+        }
+        
+        // Clear localStorage
+        localStorage.clear();
+        console.log('localStorage cleared');
+        
+        // Clear sessionStorage
+        sessionStorage.clear();
+        console.log('sessionStorage cleared');
+        
+        // Force service worker update
+        if ('serviceWorker' in navigator) {
+            const registration = await navigator.serviceWorker.getRegistration();
+            if (registration) {
+                await registration.unregister();
+                console.log('Service worker unregistered');
+            }
+        }
+        
+        console.log('Aggressive cache clear completed');
+        
+    } catch (error) {
+        console.error('Aggressive cache clear failed:', error);
+    }
+}
+
 // Check if we need to show update notification
 function checkForUpdateNotification() {
     const lastVersion = localStorage.getItem('lastVersion');
-    const currentVersion = 'v8';
+    const currentVersion = 'v9';
     const lastUpdatePrompt = localStorage.getItem('lastUpdatePrompt');
     const now = Date.now();
     
@@ -2644,7 +2687,7 @@ function addManualRefreshButton() {
             }
             
             #manualRefreshBtn::before {
-                content: "🔄";
+                content: "🌎";
                 font-size: 16px;
                 margin-right: 0;
             }
@@ -2693,16 +2736,8 @@ async function handleManualRefresh() {
     button.disabled = true;
     
     try {
-        // Clear all caches
-        if ('caches' in window) {
-            const cacheNames = await caches.keys();
-            await Promise.all(cacheNames.map(name => caches.delete(name)));
-            console.log('Manual refresh: All caches cleared');
-        }
-        
-        // Clear localStorage markers
-        localStorage.removeItem('lastUpdatePrompt');
-        localStorage.removeItem('lastVersion');
+        // Use aggressive cache clearing
+        await aggressiveCacheClear();
         
         // Show success message
         showToast('🔄 Refreshing app with latest updates...', 'success');
@@ -2724,6 +2759,24 @@ async function handleManualRefresh() {
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Check for version change and force cache clear
+    const lastVersion = localStorage.getItem('lastVersion');
+    const currentVersion = 'v9';
+    
+    if (lastVersion !== currentVersion) {
+        console.log('Version changed from', lastVersion, 'to', currentVersion);
+        console.log('Forcing aggressive cache clear...');
+        
+        // Perform aggressive cache clear
+        aggressiveCacheClear().then(() => {
+            // Set new version
+            localStorage.setItem('lastVersion', currentVersion);
+            // Force reload
+            window.location.reload(true);
+        });
+        return; // Stop execution here
+    }
+    
     // Track app start time for smart update logic
     if (!localStorage.getItem('appStartTime')) {
         localStorage.setItem('appStartTime', Date.now().toString());

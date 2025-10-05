@@ -1,13 +1,12 @@
 {
-  "version": "1.0.8",
-  "build": "2024-01-15-003",
-  "timestamp": 1705312800000,
+  "version": "1.0.9",
+  "build": "2024-01-15-464",
+  "timestamp": 1759678531464,
   "changelog": [
-    "Removed edit and delete buttons",
-    "Fixed constant refreshing issue",
-    "Update checks every 5 minutes instead of 15 seconds",
-    "2-minute cooldown between updates",
-    "Stable mobile experience",
-    "Aggressive cache busting for hosted apps"
+    "Added manual refresh button",
+    "Fixed cache clearing for hosted apps",
+    "Force complete cache refresh on update",
+    "Improved mobile cache handling",
+    "Better user control over updates"
   ]
 }

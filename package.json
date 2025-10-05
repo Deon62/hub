@@ -3,7 +3,9 @@
   "version": "1.0.6",
   "description": "BSN with silent update mechanism",
   "scripts": {
-    "test": "echo 'BSN is ready for deployment!'"
+    "test": "echo 'BSN is ready for deployment!'",
+    "deploy": "node deploy-cache-clear.js",
+    "clear-cache": "node deploy-cache-clear.js"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0"
