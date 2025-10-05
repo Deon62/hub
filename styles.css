@@ -3163,6 +3163,53 @@ textarea:focus {
     align-items: center;
 }
 
+/* Offline Business Profile Styles */
+.offline-business-profile {
+    text-align: center;
+    padding: 60px 20px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.offline-icon {
+    color: #6b7280;
+    margin-bottom: 24px;
+}
+
+.offline-business-profile h1 {
+    color: #374151;
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.offline-business-profile p {
+    color: #6b7280;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.offline-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 32px;
+}
+
+.offline-tip {
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #0F3D3E;
+}
+
+.offline-tip p {
+    margin: 0;
+    color: #374151;
+    font-size: 0.9rem;
+}
+
 .business-profile-status {
     display: inline-flex;
     align-items: center;

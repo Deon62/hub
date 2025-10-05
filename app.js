@@ -1420,6 +1420,11 @@ function renderBusinessProfile() {
     const business = listings.find(listing => listing.id === businessId);
     
     if (!business) {
+        // Check if we're offline and show appropriate message
+        if (!navigator.onLine) {
+            showOfflineBusinessProfile(businessId);
+            return;
+        }
         // Redirect to businesses page if business not found
         window.location.href = 'businesses.html';
         return;
@@ -1557,6 +1562,33 @@ function renderBusinessProfile() {
                     </svg>
                     Go Back
                 </button>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Show offline business profile message
+ */
+function showOfflineBusinessProfile(businessId) {
+    const profileCard = document.getElementById('businessProfileCard');
+    if (!profileCard) return;
+    
+    profileCard.innerHTML = `
+        <div class="offline-business-profile">
+            <div class="offline-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+            </div>
+            <h1>Business Profile Unavailable Offline</h1>
+            <p>This business profile is not available while offline. Please check your internet connection and try again.</p>
+            <div class="offline-actions">
+                <button class="btn btn-primary" onclick="window.history.back()">Go Back</button>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">Go Home</button>
+            </div>
+            <div class="offline-tip">
+                <p><strong>Tip:</strong> Browse businesses while online to cache them for offline viewing!</p>
             </div>
         </div>
     `;

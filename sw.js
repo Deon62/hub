@@ -1,14 +1,14 @@
 // Service Worker for Student Hustle Hub - Enhanced PWA Support
-const CACHE_NAME = 'student-hustle-hub-v3';
-const STATIC_CACHE = 'static-cache-v3';
-const DYNAMIC_CACHE = 'dynamic-cache-v3';
+const CACHE_NAME = 'student-hustle-hub-v4';
+const STATIC_CACHE = 'static-cache-v4';
+const DYNAMIC_CACHE = 'dynamic-cache-v4';
 
 // Essential assets to cache immediately
 const urlsToCache = [
     '/',
     '/index.html',
-    '/styles.css',
-    '/app.js',
+    '/styles.css?v=4',
+    '/app.js?v=4',
     '/manifest.json',
     '/offline.html',
     '/assets/logo.png',
@@ -94,6 +94,30 @@ self.addEventListener('fetch', event => {
                     return response;
                 }
                 
+                // For business profile pages, try to serve the base template
+                if (url.pathname === '/business-profile.html') {
+                    console.log('[SW] Business profile page requested, serving base template');
+                    return caches.match('/business-profile.html')
+                        .then(cachedResponse => {
+                            if (cachedResponse) {
+                                return cachedResponse;
+                            }
+                            // If not cached, fetch and cache it
+                            return fetch('/business-profile.html')
+                                .then(fetchResponse => {
+                                    if (fetchResponse && fetchResponse.status === 200) {
+                                        const responseToCache = fetchResponse.clone();
+                                        caches.open(STATIC_CACHE)
+                                            .then(cache => {
+                                                console.log('[SW] Caching business profile template');
+                                                cache.put('/business-profile.html', responseToCache);
+                                            });
+                                    }
+                                    return fetchResponse;
+                                });
+                        });
+                }
+                
                 // Try to fetch from network
                 return fetch(request)
                     .then(fetchResponse => {
@@ -116,6 +140,19 @@ self.addEventListener('fetch', event => {
                     })
                     .catch(error => {
                         console.log('[SW] Network request failed:', request.url, error);
+                        
+                        // Special handling for business profile pages
+                        if (url.pathname === '/business-profile.html') {
+                            console.log('[SW] Serving business profile template offline');
+                            return caches.match('/business-profile.html')
+                                .then(cachedResponse => {
+                                    if (cachedResponse) {
+                                        return cachedResponse;
+                                    }
+                                    // Fallback to offline page if business profile not cached
+                                    return caches.match('/offline.html');
+                                });
+                        }
                         
                         // Return offline fallback for navigation requests
                         if (request.mode === 'navigate') {
