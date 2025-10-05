@@ -1,8 +1,9 @@
 {
-  "version": "1.0.9",
-  "build": "2024-01-15-464",
-  "timestamp": 1759678531464,
+  "version": "1.1.0",
+  "build": "2024-01-15-FORCE-UPDATE",
+  "timestamp": 1759679000000,
   "changelog": [
+    "FORCE UPDATE: Breaking all caches",
     "Added manual refresh button",
     "Fixed cache clearing for hosted apps",
     "Force complete cache refresh on update",

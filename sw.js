@@ -1,15 +1,15 @@
 // Service Worker for Student Hustle Hub - Enhanced PWA Support
-const CACHE_NAME = 'student-hustle-hub-v9';
-const STATIC_CACHE = 'static-cache-v9';
-const DYNAMIC_CACHE = 'dynamic-cache-v9';
+const CACHE_NAME = 'student-hustle-hub-v10-FORCE';
+const STATIC_CACHE = 'static-cache-v10-FORCE';
+const DYNAMIC_CACHE = 'dynamic-cache-v10-FORCE';
 const UPDATE_CHECK_INTERVAL = 5 * 60 * 1000; // Check for updates every 5 minutes
 
 // Essential assets to cache immediately
 const urlsToCache = [
     '/',
     '/index.html',
-    '/styles.css?v=9',
-    '/app.js?v=9',
+    '/styles.css?v=10-FORCE',
+    '/app.js?v=10-FORCE',
     '/manifest.json',
     '/version.json',
     '/offline.html',
@@ -29,7 +29,7 @@ const urlsToCache = [
 
 // Install event - Cache essential assets
 self.addEventListener('install', event => {
-    console.log('[SW] Installing service worker v9 - NUCLEAR CACHE CLEAR...');
+    console.log('[SW] Installing service worker v10-FORCE - NUCLEAR CACHE CLEAR...');
     
     event.waitUntil(
         // NUCLEAR OPTION: Clear ALL caches including service worker cache
@@ -95,7 +95,7 @@ self.addEventListener('activate', event => {
                 clients.forEach(client => {
                     client.postMessage({
                         type: 'SW_READY',
-                        payload: { version: 'v9' }
+                        payload: { version: 'v10-FORCE' }
                     });
                 });
             });
@@ -285,7 +285,7 @@ async function clearOldCachesAggressively() {
         const cacheNames = await caches.keys();
         const oldCaches = cacheNames.filter(name => 
             name.includes('student-hustle-hub') && 
-            !name.includes('v9') // Keep only current version
+            !name.includes('v10-FORCE') // Keep only current version
         );
         
         // Delete old caches
