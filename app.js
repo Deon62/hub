@@ -2327,7 +2327,7 @@ async function forceCacheRefresh() {
 // Check if we need to show update notification
 function checkForUpdateNotification() {
     const lastVersion = localStorage.getItem('lastVersion');
-    const currentVersion = 'v7';
+    const currentVersion = 'v8';
     const lastUpdatePrompt = localStorage.getItem('lastUpdatePrompt');
     const now = Date.now();
     
@@ -2502,7 +2502,7 @@ function showUpdateNotification() {
 
 // Apply update now (gentle update)
 function applyUpdateNow() {
-    localStorage.setItem('lastVersion', 'v7');
+    localStorage.setItem('lastVersion', 'v8');
     localStorage.setItem('lastUpdatePrompt', Date.now().toString());
     
     // Remove notification
@@ -2522,7 +2522,7 @@ function applyUpdateNow() {
 
 // Clear cache and update (nuclear option)
 function clearCacheAndUpdate() {
-    localStorage.setItem('lastVersion', 'v7');
+    localStorage.setItem('lastVersion', 'v8');
     localStorage.setItem('lastUpdatePrompt', Date.now().toString());
     
     // Remove notification

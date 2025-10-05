@@ -1,15 +1,15 @@
 // Service Worker for Student Hustle Hub - Enhanced PWA Support
-const CACHE_NAME = 'student-hustle-hub-v7';
-const STATIC_CACHE = 'static-cache-v7';
-const DYNAMIC_CACHE = 'dynamic-cache-v7';
+const CACHE_NAME = 'student-hustle-hub-v8';
+const STATIC_CACHE = 'static-cache-v8';
+const DYNAMIC_CACHE = 'dynamic-cache-v8';
 const UPDATE_CHECK_INTERVAL = 5 * 60 * 1000; // Check for updates every 5 minutes
 
 // Essential assets to cache immediately
 const urlsToCache = [
     '/',
     '/index.html',
-    '/styles.css?v=7',
-    '/app.js?v=7',
+    '/styles.css?v=8',
+    '/app.js?v=8',
     '/manifest.json',
     '/version.json',
     '/offline.html',
@@ -29,31 +29,42 @@ const urlsToCache = [
 
 // Install event - Cache essential assets
 self.addEventListener('install', event => {
-    console.log('[SW] Installing service worker v7...');
+    console.log('[SW] Installing service worker v8 - NUCLEAR CACHE CLEAR...');
     
     event.waitUntil(
-        // First, clear ALL existing caches
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    console.log('[SW] Deleting old cache:', cacheName);
+        // NUCLEAR OPTION: Clear ALL caches including service worker cache
+        (async () => {
+            try {
+                // Clear all existing caches
+                const cacheNames = await caches.keys();
+                console.log('[SW] Found caches to delete:', cacheNames);
+                
+                await Promise.all(cacheNames.map(cacheName => {
+                    console.log('[SW] NUCLEAR: Deleting cache:', cacheName);
                     return caches.delete(cacheName);
-                })
-            );
-        }).then(() => {
-            console.log('[SW] All old caches cleared');
-            // Now cache new assets
-            return caches.open(STATIC_CACHE);
-        }).then(cache => {
-            console.log('[SW] Caching essential assets...');
-            return cache.addAll(urlsToCache);
-        }).then(() => {
-            console.log('[SW] Essential assets cached successfully');
-            // Force activation of new service worker immediately
-            return self.skipWaiting();
-        }).catch(error => {
-            console.error('[SW] Failed to cache essential assets:', error);
-        })
+                }));
+                
+                console.log('[SW] NUCLEAR: All caches cleared');
+                
+                // Wait a moment to ensure deletion is complete
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Now cache new assets with fresh cache
+                const cache = await caches.open(STATIC_CACHE);
+                console.log('[SW] Caching fresh assets...');
+                await cache.addAll(urlsToCache);
+                
+                console.log('[SW] Fresh assets cached successfully');
+                
+                // Force activation immediately
+                return self.skipWaiting();
+                
+            } catch (error) {
+                console.error('[SW] NUCLEAR cache clear failed:', error);
+                // Still try to activate even if cache clear fails
+                return self.skipWaiting();
+            }
+        })()
     );
 });
 
@@ -84,7 +95,7 @@ self.addEventListener('activate', event => {
                 clients.forEach(client => {
                     client.postMessage({
                         type: 'SW_READY',
-                        payload: { version: 'v7' }
+                        payload: { version: 'v8' }
                     });
                 });
             });
@@ -274,7 +285,7 @@ async function clearOldCachesAggressively() {
         const cacheNames = await caches.keys();
         const oldCaches = cacheNames.filter(name => 
             name.includes('student-hustle-hub') && 
-            !name.includes('v7') // Keep only current version
+            !name.includes('v8') // Keep only current version
         );
         
         // Delete old caches
@@ -283,7 +294,7 @@ async function clearOldCachesAggressively() {
         
         // Also clear any caches with old version numbers
         const versionCaches = cacheNames.filter(name => 
-            name.includes('v6') || name.includes('v5') || name.includes('v4')
+            name.includes('v7') || name.includes('v6') || name.includes('v5') || name.includes('v4')
         );
         
         await Promise.all(versionCaches.map(name => caches.delete(name)));
